@@ -1,0 +1,1049 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Transalp Energie</title>
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Transalp">
+<meta name="theme-color" content="#121A24">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23121A24'/%3E%3Cpath d='M0,72 L18,60 L30,66 L46,40 L58,52 L74,24 L100,38 L100,100 L0,100 Z' fill='%23F0A23C' opacity='0.85'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fjalla+One&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg-base: #121A24;
+    --bg-surface: #1B2530;
+    --bg-surface-2: #212D3A;
+    --line: #2C3A47;
+    --text-primary: #F0EDE4;
+    --text-muted: #7E8FA0;
+    --accent-fuel: #F0A23C;
+    --accent-effort: #5FBFAE;
+    --accent-water: #4FA3D1;
+  }
+
+  *{ box-sizing: border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
+  html, body{ height: 100%; background: #0A0F15; }
+
+  body{
+    font-family: 'Inter', sans-serif;
+    color: var(--text-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 24px 12px;
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
+  .screen{
+    width: 100%;
+    max-width: 400px;
+    height: 760px;
+    background: var(--bg-base);
+    border-radius: 28px;
+    overflow: hidden;
+    position: relative;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.5), 0 0 0 1px var(--line);
+  }
+
+  .screen::before{
+    content: "";
+    position: absolute; inset: 0; pointer-events: none; opacity: 0.05; z-index: 0;
+    background-image: repeating-radial-gradient(circle at 20% -10%, transparent 0 22px, var(--text-primary) 22px 23px, transparent 23px 46px);
+  }
+
+  .content{ position: relative; z-index: 1; padding: 26px 24px 20px; height: 100%; overflow-y: auto; }
+
+  .eyebrow{ font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--accent-effort); text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
+  .eyebrow span.dim{ color: var(--text-muted); }
+  .route{ font-family: 'Inter', sans-serif; font-weight: 600; font-size: 15px; margin-top: 10px; }
+  .route .arrow{ color: var(--text-muted); margin: 0 4px; }
+  .hr{ height: 1px; background: var(--line); margin: 14px 0 16px; }
+
+  .stat-strip{ display: flex; gap: 16px; margin-bottom: 20px; }
+  .stat-strip .stat{ flex: 1; }
+  .stat .val{ font-family: 'Fjalla One', sans-serif; font-size: 24px; }
+  .stat .lbl{ font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-top: 2px; }
+
+  .hero{
+    position: relative; height: 190px; border-radius: 18px;
+    background: linear-gradient(180deg, var(--bg-surface-2) 0%, var(--bg-surface) 100%);
+    overflow: hidden; margin-bottom: 14px; border: 1px solid var(--line);
+    cursor: pointer;
+  }
+  .hero svg{ position: absolute; inset: 0; width: 100%; height: 100%; }
+  .hero-copy{ position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 12px; }
+  .kcal-num{ font-family: 'Fjalla One', sans-serif; font-size: 52px; line-height: 1; text-shadow: 0 2px 18px rgba(0,0,0,0.5); }
+  .kcal-lbl{ font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.16em; color: var(--accent-fuel); text-transform: uppercase; margin-top: 4px; }
+
+  .tap-hint{
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted);
+    letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 18px; cursor: pointer;
+  }
+  .tap-hint .chev{ color: var(--accent-fuel); font-size: 12px; }
+
+  .macros{ display: flex; flex-direction: column; border-top: 1px solid var(--line); margin-bottom: 18px; }
+  .macro-row{ display: flex; align-items: center; justify-content: space-between; padding: 11px 2px; border-bottom: 1px solid var(--line); }
+  .macro-row .name{ font-size: 13px; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+  .dot-icon{ width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-icon.kh{ background: var(--accent-fuel); }
+  .dot-icon.ew{ background: var(--accent-effort); }
+  .dot-icon.ft{ background: #C48CE0; }
+  .macro-row .amount{ font-family: 'JetBrains Mono', monospace; font-size: 14.5px; font-weight: 500; }
+
+  .power{ background: var(--bg-surface); border: 1px solid var(--line); border-radius: 14px; padding: 15px 18px; margin-bottom: 20px; }
+  .power .title{ font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.1em; color: var(--text-muted); text-transform: uppercase; margin-bottom: 9px; }
+  .power-grid{ display: flex; justify-content: space-between; }
+  .power-grid .p .v{ font-family: 'Fjalla One', sans-serif; font-size: 19px; }
+  .power-grid .p .l{ font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted); letter-spacing: 0.06em; text-transform: uppercase; margin-top: 1px; }
+  .power-grid .p.system .v{ color: var(--accent-fuel); }
+
+  .navrow{ display: flex; align-items: center; justify-content: space-between; }
+  .navbtn{ width: 38px; height: 38px; border-radius: 50%; background: var(--bg-surface); border: 1px solid var(--line); color: var(--text-primary); display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 16px; }
+  .navbtn.disabled{ opacity: 0.25; pointer-events: none; }
+  .pager{ display: flex; justify-content: center; gap: 7px; }
+  .pager .d{ width: 6px; height: 6px; border-radius: 50%; background: var(--line); cursor: pointer; }
+  .pager .d.active{ background: var(--accent-fuel); width: 18px; border-radius: 4px; }
+
+  .week{ font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted); text-align: center; margin-top: 14px; letter-spacing: 0.04em; padding-bottom: 4px; }
+  .week b{ color: var(--accent-effort); font-weight: 600; }
+
+  /* ---- Detail sheet ---- */
+  .sheet{
+    position: absolute; inset: 0; z-index: 5;
+    background: var(--bg-base);
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(.32,.72,0,1);
+    display: flex; flex-direction: column;
+  }
+  .sheet.open{ transform: translateY(0); }
+
+  .sheet-header{ padding: 22px 24px 0; flex-shrink: 0; }
+  .sheet-close{
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.1em;
+    color: var(--text-primary); text-transform: uppercase; cursor: pointer; margin-bottom: 16px;
+    background: var(--bg-surface); border: 1px solid var(--line); border-radius: 20px;
+    padding: 8px 16px 8px 12px;
+  }
+  .sheet-close:active{ background: var(--bg-surface-2); }
+  .sheet-close .chev{ color: var(--accent-fuel); transform: rotate(180deg); display:inline-block; font-size: 13px; }
+  .sheet-title{ font-family: 'Fjalla One', sans-serif; font-size: 26px; }
+  .sheet-sub{ font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--text-muted); margin-top: 2px; letter-spacing: 0.04em; }
+
+  .model-tabs{ display: flex; gap: 6px; margin: 16px 0 4px; }
+  .model-tab{
+    flex: 1; text-align: center; padding: 9px 4px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--bg-surface);
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; letter-spacing: 0.03em;
+    color: var(--text-muted); cursor: pointer; line-height: 1.3;
+  }
+  .model-tab b{ display:block; font-family:'Inter',sans-serif; font-size: 11.5px; color: var(--text-primary); font-weight:600; margin-bottom:1px; }
+  .model-tab.active{ border-color: var(--accent-fuel); background: rgba(240,162,60,0.1); }
+  .model-tab.active b{ color: var(--accent-fuel); }
+
+  .sheet-body{ flex: 1; overflow-y: auto; padding: 16px 24px 30px; }
+
+  .model-kcal{
+    display:flex; align-items:baseline; gap:8px; margin: 10px 0 14px;
+  }
+  .model-kcal .n{ font-family:'Fjalla One',sans-serif; font-size:40px; color: var(--accent-fuel); }
+  .model-kcal .u{ font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.08em; }
+
+  .model-note{ font-size: 12px; color: var(--text-muted); line-height: 1.5; margin-bottom: 18px; }
+
+  .sec{ margin-bottom: 20px; }
+  .sec-title{
+    display:flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono',monospace; font-size:10.5px; letter-spacing:0.1em;
+    text-transform:uppercase; color: var(--text-primary); margin-bottom: 10px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .sec-title .ic{ width:8px; height:8px; border-radius:50%; }
+
+  .info-row{ display:flex; justify-content:space-between; align-items:flex-start; padding: 7px 0; gap: 12px; }
+  .info-row .k{ font-size: 12.5px; color: var(--text-muted); flex-shrink: 0; }
+  .info-row .v{ font-family:'JetBrains Mono',monospace; font-size: 12.5px; text-align: right; font-weight: 500; }
+
+  .sec-tappable{ cursor: pointer; transition: opacity 0.15s; }
+  .sec-tappable:active{ opacity: 0.7; }
+  .module-hint{
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted);
+    text-align: center; letter-spacing: 0.05em; text-transform: uppercase;
+    margin: 8px 0 18px;
+  }
+
+  /* ---- Food-Log Sheet ---- */
+  .food-sheet{
+    position: absolute; inset: 0; z-index: 10;
+    background: var(--bg-base);
+    transform: translateY(100%);
+    transition: transform 0.32s cubic-bezier(.32,.72,0,1);
+    display: flex; flex-direction: column;
+  }
+  .food-sheet.open{ transform: translateY(0); }
+  .food-header{ padding: 22px 24px 14px; flex-shrink: 0; border-bottom: 1px solid var(--line); }
+  .food-body{ flex: 1; overflow-y: auto; padding: 16px 24px 12px; }
+
+  .food-row{ background: var(--bg-surface); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; margin-bottom: 10px; }
+  .food-row-top{ display: flex; align-items: center; gap: 8px; }
+  .food-input{
+    flex: 1; background: transparent; border: none; outline: none;
+    color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 13.5px; padding: 4px 0;
+    -webkit-user-select: text; user-select: text;
+  }
+  .food-input::placeholder{ color: var(--text-muted); }
+  .food-remove{
+    width: 24px; height: 24px; border-radius: 50%; background: var(--bg-surface-2);
+    border: 1px solid var(--line); color: var(--text-muted);
+    display: flex; align-items: center; justify-content: center; cursor: pointer;
+    font-size: 13px; flex-shrink: 0;
+  }
+  .food-result{ font-family: 'JetBrains Mono', monospace; font-size: 10.5px; color: var(--accent-fuel); margin-top: 6px; min-height: 14px; }
+  .food-result.pending{ color: var(--text-muted); }
+  .food-result.err{ color: #D97A6C; cursor: pointer; }
+
+  .manual-grid{ display: flex; gap: 8px; margin-top: 8px; }
+  .manual-field{ flex: 1; text-align: center; }
+  .manual-field input{
+    width: 100%; background: var(--bg-surface-2); border: 1px solid var(--line); border-radius: 8px;
+    color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    text-align: center; padding: 6px 2px; outline: none;
+  }
+  .manual-label{ font-family: 'JetBrains Mono', monospace; font-size: 8.5px; color: var(--text-muted); margin-top: 3px; text-transform: uppercase; letter-spacing: 0.03em; }
+
+  .report-btn{
+    width: 100%; padding: 14px; border-radius: 14px; border: 1px solid var(--accent-fuel);
+    background: rgba(240,162,60,0.1); color: var(--accent-fuel);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; cursor: pointer; margin-top: 4px;
+  }
+  .report-btn:active{ background: rgba(240,162,60,0.2); }
+
+  .food-add-btn{
+    width: 100%; padding: 12px; border-radius: 12px; border: 1px dashed var(--line);
+    background: transparent; color: var(--text-muted);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.06em;
+    text-transform: uppercase; cursor: pointer; margin-top: 2px;
+  }
+
+  .food-summary{ flex-shrink: 0; border-top: 1px solid var(--line); padding: 16px 24px 22px; background: var(--bg-surface); }
+  .food-summary-title{ font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text-muted); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 10px; }
+  .food-summary-grid{ display: flex; justify-content: space-between; }
+  .food-summary-grid .s .v{ font-family: 'Fjalla One', sans-serif; font-size: 20px; }
+  .food-summary-grid .s .l{ font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.06em; margin-top: 1px; }
+  .food-summary-grid .s.kcal .v{ color: var(--accent-fuel); }
+
+  .const-badge{
+    display:inline-block; font-family:'JetBrains Mono',monospace; font-size: 8.5px;
+    color: var(--text-muted); border: 1px solid var(--line); border-radius: 5px;
+    padding: 1px 6px; letter-spacing: 0.05em; margin-left: 6px; vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<div class="screen" id="screen">
+  <div class="content">
+
+    <div class="eyebrow">
+      <span>Transalp E‑MTB</span>
+      <span class="dim" id="dayCounter">Tag 1 / 6</span>
+    </div>
+    <div class="route" id="route">Edelweißspitze <span class="arrow">→</span> Maria Luggau</div>
+    <div class="hr"></div>
+
+    <div class="stat-strip">
+      <div class="stat"><div class="val" id="km">106 km</div><div class="lbl">Strecke</div></div>
+      <div class="stat"><div class="val" id="hm">1.880 Hm</div><div class="lbl">Anstieg</div></div>
+      <div class="stat"><div class="val" id="zeit">~11,3 h</div><div class="lbl">Fahrzeit</div></div>
+    </div>
+
+    <div class="hero" id="heroTap">
+      <svg viewBox="0 0 400 190" preserveAspectRatio="none">
+        <defs>
+          <linearGradient id="fuelFill" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#F0A23C" stop-opacity="0.55"/>
+            <stop offset="100%" stop-color="#F0A23C" stop-opacity="0.03"/>
+          </linearGradient>
+        </defs>
+        <path id="profileFill" fill="url(#fuelFill)" d=""/>
+        <path id="profileLine" fill="none" stroke="#F0A23C" stroke-width="1.5" stroke-opacity="0.65" d=""/>
+      </svg>
+      <div class="hero-copy">
+        <div class="kcal-num" id="kcal">6.242</div>
+        <div class="kcal-lbl">kcal Bedarf</div>
+      </div>
+    </div>
+
+    <div class="tap-hint" id="tapHint"><span>Antippen für Details</span><span class="chev">▾</span></div>
+
+    <div class="macros">
+      <div class="macro-row"><div class="name"><span class="dot-icon kh"></span>Kohlenhydrate</div><div class="amount" id="kh">811 g</div></div>
+      <div class="macro-row"><div class="name"><span class="dot-icon ew"></span>Eiweiß</div><div class="amount" id="ew">148 g</div></div>
+      <div class="macro-row"><div class="name"><span class="dot-icon ft"></span>Fett</div><div class="amount" id="ft">267 g</div></div>
+    </div>
+
+    <div class="power">
+      <div class="title">Ø Leistung</div>
+      <div class="power-grid">
+        <div class="p"><div class="v" id="wRider">117 W</div><div class="l">Fahrer</div></div>
+        <div class="p"><div class="v" id="wMotor">145 W</div><div class="l">Motor</div></div>
+        <div class="p system"><div class="v" id="wSystem">262 W</div><div class="l">System</div></div>
+      </div>
+    </div>
+
+    <div class="navrow">
+      <div class="navbtn" id="prevBtn">‹</div>
+      <div class="pager" id="pager"></div>
+      <div class="navbtn" id="nextBtn">›</div>
+    </div>
+
+    <div class="week">Woche gesamt <b>31.700 kcal</b> · Ø <b>5.290 kcal</b>/Tag</div>
+
+  </div>
+
+  <!-- Detail Sheet -->
+  <div class="sheet" id="sheet">
+    <div class="sheet-header">
+      <div class="sheet-close" id="sheetClose"><span class="chev">▾</span><span>Zurück</span></div>
+      <div class="sheet-title" id="sheetTitle">Tag 1</div>
+      <div class="sheet-sub" id="sheetSub">Edelweißspitze → Maria Luggau · 106 km · 1.880 Hm</div>
+      <div class="model-tabs" id="modelTabs"></div>
+    </div>
+    <div class="sheet-body">
+
+      <div class="model-kcal"><span class="n" id="mKcal">6.242</span><span class="u">kcal / Tag</span></div>
+      <div class="model-note" id="mNote"></div>
+
+      <div class="macros sec-tappable" style="margin-bottom:20px;" data-module="macros" data-label="Kohlenhydrate · Eiweiß · Fett">
+        <div class="macro-row"><div class="name"><span class="dot-icon kh"></span>Kohlenhydrate</div><div class="amount" id="mKh">811 g</div></div>
+        <div class="macro-row"><div class="name"><span class="dot-icon ew"></span>Eiweiß</div><div class="amount" id="mEw">148 g</div></div>
+        <div class="macro-row"><div class="name"><span class="dot-icon ft"></span>Fett</div><div class="amount" id="mFt">267 g</div></div>
+      </div>
+      <div class="module-hint">Antippen, um Lebensmittel zu erfassen</div>
+
+      <div class="sec sec-tappable" data-module="water" data-label="Wasser unterwegs">
+        <div class="sec-title"><span class="ic" style="background:var(--accent-water)"></span>Wasser unterwegs<span class="const-badge">gleich in allen Modellen</span></div>
+        <div class="info-row"><div class="k">Trinkmenge Etappe</div><div class="v" id="wTotal">3,4 L</div></div>
+        <div class="info-row"><div class="k">Rate</div><div class="v" id="wInterval">150 ml alle 30 Min</div></div>
+        <div class="info-row"><div class="k">Herleitung</div><div class="v" id="wCalc" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);font-weight:400;">Schweißverlust aus Aktivitäts-kcal × 80%</div></div>
+      </div>
+
+      <div class="sec sec-tappable" data-module="nuts" data-label="Nüsse während der Fahrt">
+        <div class="sec-title"><span class="ic" style="background:var(--accent-fuel)"></span>Nüsse während der Fahrt</div>
+        <div class="info-row"><div class="k">Menge Etappe</div><div class="v" id="nutsAmount">100 g</div></div>
+        <div class="info-row"><div class="k">Intervall</div><div class="v" id="nutsInterval">20 g alle 45 Min</div></div>
+      </div>
+      <div class="module-hint">Antippen, um Lebensmittel zu erfassen</div>
+
+      <div class="sec sec-tappable" data-module="magnesium" data-label="Magnesium">
+        <div class="sec-title"><span class="ic" style="background:#B4C9DA"></span>Magnesium<span class="const-badge">gleich in allen Modellen</span></div>
+        <div class="info-row"><div class="k">Tagesdosis</div><div class="v" id="mgTotal">420 mg</div></div>
+        <div class="info-row"><div class="k">Zeitpunkt</div><div class="v" id="mgSplit">100 mg morgens · 320 mg abends</div></div>
+        <div class="info-row"><div class="k">Herleitung</div><div class="v" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);font-weight:400;">4,5 mg/kg (378 mg) + Schweißverlust</div></div>
+      </div>
+
+      <div class="sec sec-tappable" data-module="iron" data-label="Eisen">
+        <div class="sec-title"><span class="ic" style="background:#C9887A"></span>Eisen<span class="const-badge">gleich in allen Modellen</span></div>
+        <div class="info-row"><div class="k">Zielmenge/Tag</div><div class="v" id="feTotal">16 mg über Nahrung</div></div>
+        <div class="info-row"><div class="k">Zeitpunkt</div><div class="v">morgens, mit Vitamin C, ohne Kaffee/Tee</div></div>
+        <div class="info-row"><div class="k">Herleitung</div><div class="v" style="font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text-muted);font-weight:400;">8 mg × 1,8 (vegan) + Schweißverlust</div></div>
+      </div>
+
+      <div class="sec sec-tappable" style="margin-bottom:4px;" data-module="b12" data-label="Vitamin B12">
+        <div class="sec-title"><span class="ic" style="background:var(--accent-effort)"></span>Vitamin B12<span class="const-badge">gleich in allen Modellen</span></div>
+        <div class="info-row"><div class="k">Tagesdosis</div><div class="v">250 µg</div></div>
+        <div class="info-row"><div class="k">Zeitpunkt</div><div class="v">morgens, zum Frühstück</div></div>
+      </div>
+      <div class="module-hint" style="margin-bottom:4px;">Antippen, um Lebensmittel zu erfassen</div>
+
+      <button class="report-btn" id="reportBtn">📄 Tagesbericht erstellen</button>
+
+    </div>
+  </div>
+
+  <!-- Food-Log Sheet -->
+  <div class="food-sheet" id="foodSheet">
+    <div class="food-header">
+      <div class="sheet-close" id="foodClose"><span class="chev">▾</span><span>Zurück</span></div>
+      <div class="sheet-title" id="foodTitle" style="font-size:22px;">Nahrungsmittel</div>
+      <div class="sheet-sub" id="foodSaveStatus">Läuft offline · eingebaute Nährwert-Datenbank</div>
+    </div>
+    <div class="food-body">
+      <div id="foodRows"></div>
+      <button class="food-add-btn" id="foodAddBtn">+ Lebensmittel hinzufügen</button>
+    </div>
+    <div class="food-summary">
+      <div class="food-summary-title">Summe erfasst</div>
+      <div class="food-summary-grid">
+        <div class="s kcal"><div class="v" id="sumKcal">0</div><div class="l">kcal</div></div>
+        <div class="s"><div class="v" id="sumKh">0 g</div><div class="l">KH</div></div>
+        <div class="s"><div class="v" id="sumEw">0 g</div><div class="l">Eiweiß</div></div>
+        <div class="s"><div class="v" id="sumFt">0 g</div><div class="l">Fett</div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+/* ===== Eingebaute Nährwert-Datenbank (Werte pro 100 g / 100 ml) ===== */
+const foodDB = {
+  'pommes':          { kcal:280, kh:35, ew:3,  ft:13 },
+  'kartoffeln':       { kcal:70,  kh:16, ew:2,  ft:0.1 },
+  'chips':            { kcal:536, kh:50, ew:6,  ft:35 },
+  'schokolade':       { kcal:550, kh:46, ew:7,  ft:35 },
+  'tofu':             { kcal:76,  kh:2,  ew:8,  ft:5 },
+  'hafermilch':       { kcal:47,  kh:7.5,ew:1,  ft:1.5 },
+  'haferflocken':     { kcal:372, kh:59, ew:13, ft:7 },
+  'leinsamen':        { kcal:534, kh:29, ew:18, ft:42 },
+  'flohsamenschalen': { kcal:365, kh:88, ew:1,  ft:1 },
+  'walnuesse':        { kcal:654, kh:14, ew:15, ft:65 },
+  'pecannuesse':      { kcal:691, kh:14, ew:9,  ft:72 },
+  'orangensaft':      { kcal:45,  kh:10, ew:1,  ft:0 },
+  'banane':           { kcal:89,  kh:23, ew:1,  ft:0 },
+  'apfel':            { kcal:52,  kh:14, ew:0,  ft:0 },
+  // Standard vegane Grundnahrungsmittel
+  'linsen':           { kcal:116, kh:20, ew:9,  ft:0.4 },
+  'kichererbsen':     { kcal:164, kh:27, ew:9,  ft:2.6 },
+  'reis':             { kcal:130, kh:28, ew:2.7,ft:0.3 },
+  'vollkornreis':     { kcal:123, kh:26, ew:2.6,ft:1 },
+  'nudeln':           { kcal:131, kh:25, ew:5,  ft:1.1 },
+  'vollkornbrot':     { kcal:247, kh:41, ew:9,  ft:3.5 },
+  'erdnussmus':       { kcal:588, kh:20, ew:25, ft:50 },
+  'mandeln':          { kcal:579, kh:22, ew:21, ft:50 },
+  'avocado':          { kcal:160, kh:9,  ew:2,  ft:15 },
+  'sojajoghurt':      { kcal:55,  kh:3,  ew:4,  ft:2.5 },
+  'tempeh':           { kcal:193, kh:9,  ew:19, ft:11 },
+  'seitan':           { kcal:370, kh:14, ew:75, ft:2 },
+  'erbsenprotein':    { kcal:380, kh:5,  ew:80, ft:4 },
+  'datteln':          { kcal:277, kh:75, ew:2,  ft:0.4 },
+  'rosinen':          { kcal:299, kh:79, ew:3,  ft:0.5 },
+  'olivenoel':        { kcal:884, kh:0,  ew:0,  ft:100 },
+  'sojamilch':        { kcal:33,  kh:1,  ew:3,  ft:2 },
+  'kokosmilch':       { kcal:230, kh:6,  ew:2,  ft:24 },
+  'erdnuesse':        { kcal:567, kh:16, ew:25, ft:49 },
+  'cashewkerne':      { kcal:553, kh:30, ew:18, ft:44 },
+  'chiasamen':        { kcal:486, kh:42, ew:17, ft:31 }
+};
+
+// Synonyme/Schreibweisen -> Schlüssel in foodDB
+const foodSynonyms = {
+  'kartoffel':'kartoffeln','fritten':'pommes','pommesfrites':'pommes','pommes frites':'pommes',
+  'kartoffelchips':'chips','chip':'chips',
+  'schoggi':'schokolade','schoko':'schokolade',
+  'hafer milch':'hafermilch','haferdrink':'hafermilch',
+  'haferflocke':'haferflocken','hafer':'haferflocken',
+  'walnuss':'walnuesse','walnüsse':'walnuesse','walnüsse':'walnuesse',
+  'pecannuss':'pecannuesse','pecannüsse':'pecannuesse','pekannuss':'pecannuesse','pekannüsse':'pecannuesse',
+  'oj':'orangensaft',
+  'linse':'linsen',
+  'kichererbse':'kichererbsen',
+  'braunerreis':'vollkornreis','naturreis':'vollkornreis',
+  'pasta':'nudeln',
+  'brot':'vollkornbrot','vollkorntoast':'vollkornbrot',
+  'erdnussbutter':'erdnussmus','peanutbutter':'erdnussmus',
+  'mandel':'mandeln',
+  'avocados':'avocado',
+  'sojajogurt':'sojajoghurt',
+  'proteinpulver':'erbsenprotein','eiweisspulver':'erbsenprotein','erbsenproteinpulver':'erbsenprotein',
+  'dattel':'datteln',
+  'rosine':'rosinen',
+  'olivenöl':'olivenoel',
+  'erdnuss':'erdnuesse','erdnüsse':'erdnuesse',
+  'cashew':'cashewkerne','cashewkern':'cashewkerne','cashews':'cashewkerne',
+  'chia':'chiasamen'
+};
+
+function normalizeFoodText(s){
+  return s.toLowerCase()
+    .replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss')
+    .replace(/[^a-z0-9., ]/g,' ')
+    .replace(/\s+/g,' ')
+    .trim();
+}
+
+function normalizeKeyText(s){
+  // gleiche Normalisierung wie DB-Schlüssel (ohne ae/oe/ue-Umwandlung erneut, Schlüssel sind bereits so definiert)
+  return s.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z]/g,'');
+}
+
+// Baut ein durchsuchbares Wörterbuch aus DB-Schlüsseln + Synonymen (alles normalisiert, ohne Leerzeichen)
+const lookupIndex = {};
+Object.keys(foodDB).forEach(k => { lookupIndex[normalizeKeyText(k)] = k; });
+Object.keys(foodSynonyms).forEach(k => { lookupIndex[normalizeKeyText(k)] = foodSynonyms[k]; });
+
+function findFoodMatch(text){
+  const norm = normalizeFoodText(text);
+  const wordsJoined = norm.replace(/[0-9., ]*(gramm|gram|g|ml|milliliter|stueck|stk)?\b/g,' ').replace(/\s+/g,'');
+  // Versuch 1: komplette Wortkette gegen Index (ohne Zahlen/Einheiten)
+  const stripped = norm.replace(/[0-9]+([.,][0-9]+)?/g,'').replace(/\b(gramm|gram|g|ml|milliliter|stueck|stk|von|ein|eine|einen)\b/g,' ').trim();
+  const compact = stripped.replace(/\s+/g,'');
+  for(const key in lookupIndex){
+    if(compact.includes(key) || key.includes(compact) && compact.length > 2){
+      return lookupIndex[key];
+    }
+  }
+  // Versuch 2: einzelne Wörter prüfen
+  const wordList = stripped.split(/\s+/).filter(Boolean);
+  for(const w of wordList){
+    const nw = normalizeKeyText(w);
+    if(lookupIndex[nw]) return lookupIndex[nw];
+  }
+  return null;
+}
+
+function parseQuantity(text){
+  const norm = normalizeFoodText(text);
+  const match = norm.match(/([0-9]+([.,][0-9]+)?)\s*(gramm|gram|g|ml|milliliter)?/);
+  if(match && match[1]){
+    return parseFloat(match[1].replace(',', '.'));
+  }
+  return 100; // kein Mengenangabe gefunden -> 100 g als Basis annehmen
+}
+
+function lookupFoodMacros(text){
+  const key = findFoodMatch(text);
+  if(!key) return null;
+  const qty = parseQuantity(text);
+  const base = foodDB[key];
+  const factor = qty / 100; // Dreisatz
+  return {
+    kcal: Math.round(base.kcal * factor),
+    kh: Math.round(base.kh * factor * 10) / 10,
+    eiweiss: Math.round(base.ew * factor * 10) / 10,
+    fett: Math.round(base.ft * factor * 10) / 10,
+    matchedKey: key,
+    qty: qty
+  };
+}
+
+const days = [
+  {
+    route: 'Edelweißspitze <span class="arrow">→</span> Maria Luggau',
+    km: '106 km', hm: '1.880 Hm', zeit: '~11,3 h', zeitH: 11.3, waterTotal:'3,4 L', waterInt:'150 ml alle 30 Min', mgTotal:420, mgMorn:100, mgEve:320, feTotal:16,
+    kcal: '6.242', kh: '811 g', ew: '148 g', ft: '267 g',
+    wRider: '117 W', wMotor: '145 W', wSystem: '262 W',
+    fillD: 'M0,166 L20,160 L45,163 L70,143 L95,150 L120,114 L150,133 L175,95 L205,119 L230,86 L255,105 L285,71 L310,90 L335,57 L360,76 L400,67 L400,190 L0,190 Z',
+    lineD: 'M0,166 L20,160 L45,163 L70,143 L95,150 L120,114 L150,133 L175,95 L205,119 L230,86 L255,105 L285,71 L310,90 L335,57 L360,76 L400,67',
+    models: [
+      { kcal:'6.242', kh:'811 g', ew:'148 g', ft:'267 g', nuts:'300 g', nutsInt:'20 g alle 45 Min' },
+      { kcal:'5.618', kh:'868 g', ew:'185 g', ft:'156 g', nuts:'165 g',  nutsInt:'15 g alle 60 Min' },
+      { kcal:'4.515', kh:'678 g', ew:'118 g', ft:'148 g', nuts:'0 g',  nutsInt:'nur abends, nicht auf dem Bike' }
+    ]
+  },
+  {
+    route: 'Maria Luggau <span class="arrow">→</span> Auronzo di Cadore',
+    km: '60 km', hm: '1.630 Hm', zeit: '~8,3 h', zeitH: 8.3, waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    kcal: '5.330', kh: '693 g', ew: '145 g', ft: '220 g',
+    wRider: '125 W', wMotor: '167 W', wSystem: '292 W',
+    fillD: 'M0,171 L30,166 L60,169 L90,124 L120,138 L150,76 L180,105 L210,57 L240,90 L270,124 L300,105 L330,143 L360,114 L400,133 L400,190 L0,190 Z',
+    lineD: 'M0,171 L30,166 L60,169 L90,124 L120,138 L150,76 L180,105 L210,57 L240,90 L270,124 L300,105 L330,143 L360,114 L400,133',
+    models: [
+      { kcal:'5.330', kh:'693 g', ew:'145 g', ft:'220 g', nuts:'220 g', nutsInt:'20 g alle 45 Min' },
+      { kcal:'4.797', kh:'715 g', ew:'185 g', ft:'133 g', nuts:'120 g',  nutsInt:'15 g alle 60 Min' },
+      { kcal:'3.795', kh:'498 g', ew:'118 g', ft:'148 g', nuts:'0 g',  nutsInt:'nur abends, nicht auf dem Bike' }
+    ]
+  },
+  {
+    route: 'Auronzo <span class="arrow">→</span> Rifugio Col Gallina',
+    km: '44 km', hm: '1.870 Hm', zeit: '~7,5 h', zeitH: 7.5, waterTotal:'2,7 L', waterInt:'180 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    kcal: '5.440', kh: '707 g', ew: '150 g', ft: '224 g',
+    wRider: '140 W', wMotor: '210 W', wSystem: '350 W',
+    fillD: 'M0,181 L40,173 L80,176 L120,143 L160,152 L200,86 L230,105 L260,48 L290,71 L320,29 L350,52 L400,19 L400,190 L0,190 Z',
+    lineD: 'M0,181 L40,173 L80,176 L120,143 L160,152 L200,86 L230,105 L260,48 L290,71 L320,29 L350,52 L400,19',
+    models: [
+      { kcal:'5.440', kh:'707 g', ew:'150 g', ft:'224 g', nuts:'200 g', nutsInt:'20 g alle 45 Min' },
+      { kcal:'4.896', kh:'733 g', ew:'185 g', ft:'136 g', nuts:'105 g',  nutsInt:'15 g alle 60 Min' },
+      { kcal:'3.808', kh:'450 g', ew:'118 g', ft:'171 g', nuts:'0 g',  nutsInt:'nur abends, nicht auf dem Bike' }
+    ]
+  },
+  {
+    route: 'Rifugio Col Gallina <span class="arrow">→</span> Karerpass',
+    km: '63 km', hm: '1.500 Hm', zeit: '~8,4 h', zeitH: 8.4, waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    kcal: '5.271', kh: '685 g', ew: '146 g', ft: '216 g',
+    wRider: '122 W', wMotor: '159 W', wSystem: '281 W',
+    fillD: 'M0,133 L30,114 L60,143 L90,95 L120,124 L150,76 L180,143 L210,105 L240,152 L270,114 L300,138 L330,86 L360,110 L400,76 L400,190 L0,190 Z',
+    lineD: 'M0,133 L30,114 L60,143 L90,95 L120,124 L150,76 L180,143 L210,105 L240,152 L270,114 L300,138 L330,86 L360,110 L400,76',
+    models: [
+      { kcal:'5.271', kh:'685 g', ew:'146 g', ft:'216 g', nuts:'220 g', nutsInt:'20 g alle 45 Min' },
+      { kcal:'4.744', kh:'705 g', ew:'185 g', ft:'132 g', nuts:'120 g',  nutsInt:'15 g alle 60 Min' },
+      { kcal:'3.819', kh:'504 g', ew:'118 g', ft:'148 g', nuts:'0 g',  nutsInt:'nur abends, nicht auf dem Bike' }
+    ]
+  },
+  {
+    route: 'Karerpass <span class="arrow">→</span> Mezzolombardo',
+    km: '65 km', hm: '1.100 Hm', zeit: '~6,5 h', zeitH: 6.5, waterTotal:'2,0 L', waterInt:'150 ml alle 30 Min', mgTotal:400, mgMorn:100, mgEve:300, feTotal:15,
+    kcal: '4.331', kh: '563 g', ew: '140 g', ft: '169 g',
+    wRider: '116 W', wMotor: '142 W', wSystem: '258 W',
+    fillD: 'M0,143 L40,133 L80,148 L120,129 L160,138 L190,86 L220,114 L260,152 L300,166 L340,176 L400,181 L400,190 L0,190 Z',
+    lineD: 'M0,143 L40,133 L80,148 L120,129 L160,138 L190,86 L220,114 L260,152 L300,166 L340,176 L400,181',
+    models: [
+      { kcal:'4.331', kh:'563 g', ew:'140 g', ft:'169 g', nuts:'160 g', nutsInt:'20 g alle 45 Min' },
+      { kcal:'3.898', kh:'546 g', ew:'185 g', ft:'108 g', nuts:'90 g',  nutsInt:'15 g alle 60 Min' },
+      { kcal:'3.363', kh:'390 g', ew:'118 g', ft:'148 g', nuts:'0 g',  nutsInt:'nur abends, nicht auf dem Bike' }
+    ]
+  },
+  {
+    route: 'Mezzolombardo <span class="arrow">→</span> Torbole',
+    km: '76 km', hm: '1.350 Hm', zeit: '~8,4 h', zeitH: 8.4, waterTotal:'2,6 L', waterInt:'150 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    kcal: '5.103', kh: '663 g', ew: '144 g', ft: '208 g',
+    wRider: '117 W', wMotor: '145 W', wSystem: '262 W',
+    fillD: 'M0,176 L30,114 L60,86 L90,57 L120,81 L150,124 L180,105 L210,143 L240,119 L270,148 L300,129 L330,152 L360,138 L400,157 L400,190 L0,190 Z',
+    lineD: 'M0,176 L30,114 L60,86 L90,57 L120,81 L150,124 L180,105 L210,143 L240,119 L270,148 L300,129 L330,152 L360,138 L400,157',
+    models: [
+      { kcal:'5.103', kh:'663 g', ew:'144 g', ft:'208 g', nuts:'220 g', nutsInt:'20 g alle 45 Min' },
+      { kcal:'4.593', kh:'676 g', ew:'185 g', ft:'128 g', nuts:'120 g',  nutsInt:'15 g alle 60 Min' },
+      { kcal:'3.819', kh:'504 g', ew:'118 g', ft:'148 g', nuts:'0 g',  nutsInt:'nur abends, nicht auf dem Bike' }
+    ]
+  }
+];
+
+const modelMeta = [
+  { label: 'Voller\nAusgleich', note: 'Der komplette Tagesverbrauch wird 1:1 über Nahrung zurückgeführt – Gewicht bleibt stabil, volle Regeneration für den nächsten Tag.' },
+  { label: 'Rekomp-\nosition', note: 'Ca. 10 % Kaloriendefizit bei hohem, fixem Eiweiß (185 g). Der Körper zieht die fehlende Energie bevorzugt aus Fettreserven, während genug Aminosäuren für Muskelerhalt/-aufbau vorhanden sind.' },
+  { label: 'Minimum', note: 'Nur Grundumsatz plus das zwingend nötige Kohlenhydrat-Minimum für die Etappe (60 g/h), um einen Hungerast zu vermeiden. Muskelabbau wird hier bewusst in Kauf genommen.' }
+];
+
+let current = 0;
+let activeModel = 0;
+
+const pager = document.getElementById('pager');
+days.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'd' + (i === 0 ? ' active' : '');
+  d.addEventListener('click', () => goTo(i));
+  pager.appendChild(d);
+});
+
+const modelTabs = document.getElementById('modelTabs');
+modelMeta.forEach((m, i) => {
+  const t = document.createElement('div');
+  t.className = 'model-tab' + (i === 0 ? ' active' : '');
+  t.innerHTML = `<b>${i+1}</b>${m.label.split('\n').join('<br>')}`;
+  t.addEventListener('click', () => setModel(i));
+  modelTabs.appendChild(t);
+});
+
+function render(){
+  const d = days[current];
+  document.getElementById('dayCounter').textContent = `Tag ${current+1} / 6`;
+  document.getElementById('route').innerHTML = d.route;
+  document.getElementById('km').textContent = d.km;
+  document.getElementById('hm').textContent = d.hm;
+  document.getElementById('zeit').textContent = d.zeit;
+  document.getElementById('kcal').textContent = d.kcal;
+  document.getElementById('kh').textContent = d.kh;
+  document.getElementById('ew').textContent = d.ew;
+  document.getElementById('ft').textContent = d.ft;
+  document.getElementById('wRider').textContent = d.wRider;
+  document.getElementById('wMotor').textContent = d.wMotor;
+  document.getElementById('wSystem').textContent = d.wSystem;
+  document.getElementById('profileFill').setAttribute('d', d.fillD);
+  document.getElementById('profileLine').setAttribute('d', d.lineD);
+
+  [...pager.children].forEach((el, i) => el.classList.toggle('active', i === current));
+  document.getElementById('prevBtn').classList.toggle('disabled', current === 0);
+  document.getElementById('nextBtn').classList.toggle('disabled', current === days.length - 1);
+
+  document.getElementById('sheetTitle').textContent = `Tag ${current+1}`;
+  document.getElementById('sheetSub').textContent = `${d.km} · ${d.hm}`;
+  document.getElementById('wTotal').textContent = d.waterTotal;
+  document.getElementById('wInterval').textContent = d.waterInt;
+  document.getElementById('mgTotal').textContent = d.mgTotal + ' mg';
+  document.getElementById('mgSplit').textContent = `${d.mgMorn} mg morgens · ${d.mgEve} mg abends`;
+  document.getElementById('feTotal').textContent = d.feTotal + ' mg über Nahrung';
+  renderModel();
+}
+
+function renderModel(){
+  const d = days[current];
+  const m = d.models[activeModel];
+  document.getElementById('mKcal').textContent = m.kcal;
+  document.getElementById('mKh').textContent = m.kh;
+  document.getElementById('mEw').textContent = m.ew;
+  document.getElementById('mFt').textContent = m.ft;
+  document.getElementById('mNote').textContent = modelMeta[activeModel].note;
+  document.getElementById('nutsAmount').textContent = m.nuts;
+  document.getElementById('nutsInterval').textContent = m.nutsInt;
+  [...modelTabs.children].forEach((el, i) => el.classList.toggle('active', i === activeModel));
+}
+
+function setModel(i){ activeModel = i; renderModel(); }
+
+function goTo(i){
+  if(i < 0 || i >= days.length) return;
+  current = i;
+  render();
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => goTo(current - 1));
+document.getElementById('nextBtn').addEventListener('click', () => goTo(current + 1));
+
+const sheet = document.getElementById('sheet');
+document.getElementById('heroTap').addEventListener('click', () => sheet.classList.add('open'));
+document.getElementById('tapHint').addEventListener('click', () => sheet.classList.add('open'));
+document.getElementById('sheetClose').addEventListener('click', () => sheet.classList.remove('open'));
+
+let touchX = null;
+const screen = document.getElementById('screen');
+screen.addEventListener('touchstart', e => { touchX = e.touches[0].clientX; });
+screen.addEventListener('touchend', e => {
+  if(touchX === null || sheet.classList.contains('open') || document.getElementById('foodSheet').classList.contains('open')) return;
+  const diff = e.changedTouches[0].clientX - touchX;
+  if(diff > 50) goTo(current - 1);
+  if(diff < -50) goTo(current + 1);
+  touchX = null;
+});
+
+/* ================= Food log modules ================= */
+const foodSheetEl = document.getElementById('foodSheet');
+const foodEntries = {}; // key `${dayIdx}_${moduleId}` -> array of entries
+let foodCounter = 0;
+let activeModule = null; // { dayIdx, moduleId, moduleLabel }
+
+function foodKey(dayIdx, moduleId){ return `${dayIdx}_${moduleId}`; }
+function storageKey(dayIdx, moduleId){ return `foodlog_day${dayIdx}_${moduleId}`; }
+
+function newFoodEntry(){
+  foodCounter++;
+  return { id: 'f' + foodCounter + '_' + Date.now(), text: '', computed: null, status: 'idle', lastText: '' };
+}
+
+async function loadFoodEntries(dayIdx, moduleId){
+  const key = foodKey(dayIdx, moduleId);
+  if(foodEntries[key]) return;
+  try{
+    const raw = localStorage.getItem(storageKey(dayIdx, moduleId));
+    foodEntries[key] = raw ? JSON.parse(raw) : [];
+  } catch(e){
+    foodEntries[key] = [];
+  }
+}
+
+async function saveFoodEntries(dayIdx, moduleId){
+  const key = foodKey(dayIdx, moduleId);
+  const payload = JSON.stringify(foodEntries[key] || []);
+  try{
+    localStorage.setItem(storageKey(dayIdx, moduleId), payload);
+    setSaveStatus('ok');
+    return true;
+  } catch(e){
+    setSaveStatus('fail');
+    return false;
+  }
+}
+
+function setSaveStatus(state){
+  const el = document.getElementById('foodSaveStatus');
+  if(!el) return;
+  if(state === 'ok'){
+    el.textContent = 'Gespeichert auf diesem Gerät ✓';
+    el.style.color = 'var(--accent-effort)';
+  } else if(state === 'fail'){
+    el.textContent = 'Speicher des Geräts voll oder blockiert';
+    el.style.color = '#D97A6C';
+  } else {
+    el.textContent = 'Läuft offline · eingebaute Nährwert-Datenbank';
+    el.style.color = 'var(--text-muted)';
+  }
+}
+
+function renderFoodRows(){
+  const { dayIdx, moduleId } = activeModule;
+  const key = foodKey(dayIdx, moduleId);
+  const entries = foodEntries[key] || [];
+  const container = document.getElementById('foodRows');
+  container.innerHTML = '';
+
+  entries.forEach(entry => {
+    const row = document.createElement('div');
+    row.className = 'food-row';
+
+    const top = document.createElement('div');
+    top.className = 'food-row-top';
+
+    const input = document.createElement('input');
+    input.className = 'food-input';
+    input.type = 'text';
+    input.placeholder = 'z. B. Tofu 150 Gramm';
+    input.value = entry.text;
+    input.addEventListener('keydown', e => { if(e.key === 'Enter'){ input.blur(); } });
+    input.addEventListener('blur', () => handleFoodChange(entry.id, input.value));
+
+    const removeBtn = document.createElement('div');
+    removeBtn.className = 'food-remove';
+    removeBtn.textContent = '×';
+    removeBtn.addEventListener('click', () => removeFoodEntry(entry.id));
+
+    top.appendChild(input);
+    top.appendChild(removeBtn);
+    row.appendChild(top);
+
+    const result = document.createElement('div');
+    if(entry.status === 'error'){
+      result.className = 'food-result err';
+      result.textContent = 'Fehler beim Berechnen – antippen zum Wiederholen';
+      result.addEventListener('click', () => handleFoodChange(entry.id, entry.text, true));
+      row.appendChild(result);
+    } else if(entry.status === 'manual'){
+      result.className = 'food-result pending';
+      result.textContent = 'Nicht in der Datenbank – Werte manuell eintragen:';
+      row.appendChild(result);
+
+      const grid = document.createElement('div');
+      grid.className = 'manual-grid';
+      const fields = [ ['kcal','kcal'], ['kh','g KH'], ['eiweiss','g Eiw.'], ['fett','g Fett'] ];
+      fields.forEach(([field, label]) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'manual-field';
+        const inp = document.createElement('input');
+        inp.type = 'number';
+        inp.inputMode = 'decimal';
+        inp.placeholder = '0';
+        inp.value = entry.computed && entry.computed[field] ? entry.computed[field] : '';
+        inp.addEventListener('input', () => handleManualMacroChange(entry.id, field, inp.value || '0'));
+        const lbl = document.createElement('div');
+        lbl.className = 'manual-label';
+        lbl.textContent = label;
+        wrap.appendChild(inp);
+        wrap.appendChild(lbl);
+        grid.appendChild(wrap);
+      });
+      row.appendChild(grid);
+    } else if(entry.computed){
+      const c = entry.computed;
+      result.className = 'food-result';
+      result.textContent = `${c.kcal} kcal · ${c.kh} g KH · ${c.eiweiss} g Eiweiß · ${c.fett} g Fett`;
+      row.appendChild(result);
+    } else {
+      result.className = 'food-result';
+      result.textContent = '';
+      row.appendChild(result);
+    }
+    container.appendChild(row);
+  });
+}
+
+function updateFoodSummary(){
+  const { dayIdx, moduleId } = activeModule;
+  const key = foodKey(dayIdx, moduleId);
+  const entries = foodEntries[key] || [];
+  let kcal = 0, kh = 0, ew = 0, ft = 0;
+  entries.forEach(e => {
+    if(e.computed){
+      kcal += e.computed.kcal; kh += e.computed.kh; ew += e.computed.eiweiss; ft += e.computed.fett;
+    }
+  });
+  document.getElementById('sumKcal').textContent = Math.round(kcal);
+  document.getElementById('sumKh').textContent = Math.round(kh) + ' g';
+  document.getElementById('sumEw').textContent = Math.round(ew) + ' g';
+  document.getElementById('sumFt').textContent = Math.round(ft) + ' g';
+}
+
+async function handleFoodChange(id, text, forceRetry){
+  const { dayIdx, moduleId } = activeModule;
+  const key = foodKey(dayIdx, moduleId);
+  const entries = foodEntries[key] || [];
+  const entry = entries.find(e => e.id === id);
+  if(!entry) return;
+
+  const trimmed = text.trim();
+  entry.text = trimmed;
+
+  if(!trimmed){
+    entry.computed = null; entry.status = 'idle'; entry.lastText = '';
+    renderFoodRows(); updateFoodSummary(); setSaveStatus('saving'); saveFoodEntries(dayIdx, moduleId);
+    return;
+  }
+  if(!forceRetry && entry.status === 'done' && entry.lastText === trimmed) return;
+
+  const result = lookupFoodMacros(trimmed);
+  if(result){
+    entry.computed = { kcal: result.kcal, kh: result.kh, eiweiss: result.eiweiss, fett: result.fett };
+    entry.status = 'done';
+    entry.lastText = trimmed;
+  } else {
+    entry.computed = entry.computed && entry.status === 'manual' ? entry.computed : { kcal:0, kh:0, eiweiss:0, fett:0 };
+    entry.status = 'manual';
+    entry.lastText = trimmed;
+  }
+  renderFoodRows();
+  updateFoodSummary();
+  setSaveStatus('saving');
+  saveFoodEntries(dayIdx, moduleId);
+}
+
+function handleManualMacroChange(id, field, value){
+  const { dayIdx, moduleId } = activeModule;
+  const key = foodKey(dayIdx, moduleId);
+  const entries = foodEntries[key] || [];
+  const entry = entries.find(e => e.id === id);
+  if(!entry) return;
+  const num = parseFloat(value.replace(',', '.')) || 0;
+  if(!entry.computed) entry.computed = { kcal:0, kh:0, eiweiss:0, fett:0 };
+  entry.computed[field] = num;
+  updateFoodSummary();
+  setSaveStatus('saving');
+  saveFoodEntries(dayIdx, moduleId);
+}
+
+function removeFoodEntry(id){
+  const { dayIdx, moduleId } = activeModule;
+  const key = foodKey(dayIdx, moduleId);
+  foodEntries[key] = (foodEntries[key] || []).filter(e => e.id !== id);
+  renderFoodRows();
+  updateFoodSummary();
+  setSaveStatus('saving');
+  saveFoodEntries(dayIdx, moduleId);
+}
+
+async function openFoodSheet(moduleId, moduleLabel){
+  const dayIdx = current;
+  activeModule = { dayIdx, moduleId, moduleLabel };
+  document.getElementById('foodTitle').textContent = `${moduleLabel} · Tag ${dayIdx + 1}`;
+  setSaveStatus(null);
+
+  await loadFoodEntries(dayIdx, moduleId);
+  const key = foodKey(dayIdx, moduleId);
+  if(!foodEntries[key] || foodEntries[key].length === 0){
+    foodEntries[key] = [newFoodEntry()];
+  }
+  renderFoodRows();
+  updateFoodSummary();
+  foodSheetEl.classList.add('open');
+}
+
+document.getElementById('foodAddBtn').addEventListener('click', () => {
+  if(!activeModule) return;
+  const key = foodKey(activeModule.dayIdx, activeModule.moduleId);
+  foodEntries[key].push(newFoodEntry());
+  renderFoodRows();
+});
+
+document.getElementById('foodClose').addEventListener('click', () => {
+  foodSheetEl.classList.remove('open');
+});
+
+document.querySelectorAll('.sec-tappable').forEach(el => {
+  el.addEventListener('click', () => openFoodSheet(el.dataset.module, el.dataset.label));
+});
+
+/* ================= Tagesbericht ================= */
+const moduleLabels = {
+  macros: 'Kohlenhydrate · Eiweiß · Fett',
+  water: 'Wasser unterwegs',
+  nuts: 'Nüsse während der Fahrt',
+  magnesium: 'Magnesium',
+  iron: 'Eisen',
+  b12: 'Vitamin B12'
+};
+
+function readModuleEntries(dayIdx, moduleId){
+  try{
+    const raw = localStorage.getItem(storageKey(dayIdx, moduleId));
+    return raw ? JSON.parse(raw) : [];
+  } catch(e){
+    return [];
+  }
+}
+
+function buildDayReport(){
+  const dayIdx = current;
+  const d = days[dayIdx];
+  const target = d.models[activeModel];
+
+  let istKcal = 0, istKh = 0, istEw = 0, istFt = 0;
+  const itemsByModule = {};
+
+  Object.keys(moduleLabels).forEach(moduleId => {
+    const entries = readModuleEntries(dayIdx, moduleId).filter(e => e.computed && e.text);
+    if(entries.length){
+      itemsByModule[moduleId] = entries;
+      entries.forEach(e => {
+        istKcal += Number(e.computed.kcal) || 0;
+        istKh += Number(e.computed.kh) || 0;
+        istEw += Number(e.computed.eiweiss) || 0;
+        istFt += Number(e.computed.fett) || 0;
+      });
+    }
+  });
+
+  const round = n => Math.round(n * 10) / 10;
+  const diffKcal = round(istKcal - parseFloat(target.kcal.replace('.','').replace(',','.')));
+
+  let itemsHtml = '';
+  Object.keys(itemsByModule).forEach(moduleId => {
+    itemsHtml += `<h3>${moduleLabels[moduleId]}</h3><table class="items">`;
+    itemsByModule[moduleId].forEach(e => {
+      const c = e.computed;
+      itemsHtml += `<tr><td>${e.text}</td><td>${c.kcal} kcal</td><td>${c.kh} g KH</td><td>${c.eiweiss} g Ew</td><td>${c.fett} g Fett</td></tr>`;
+    });
+    itemsHtml += `</table>`;
+  });
+  if(!itemsHtml){
+    itemsHtml = '<p class="muted">Für diesen Tag wurden noch keine Lebensmittel erfasst.</p>';
+  }
+
+  const html = `<!DOCTYPE html>
+<html lang="de"><head><meta charset="UTF-8">
+<title>Transalp Tagesbericht · Tag ${dayIdx+1}</title>
+<style>
+  body{ font-family: -apple-system, 'Inter', sans-serif; background:#121A24; color:#F0EDE4; padding:28px 22px; max-width:480px; margin:0 auto; }
+  h1{ font-size:22px; margin-bottom:2px; }
+  .sub{ color:#7E8FA0; font-size:13px; margin-bottom:22px; }
+  h2{ font-size:14px; text-transform:uppercase; letter-spacing:0.06em; color:#5FBFAE; border-bottom:1px solid #2C3A47; padding-bottom:8px; margin-top:26px; }
+  h3{ font-size:12.5px; color:#F0A23C; margin:16px 0 6px; text-transform:uppercase; letter-spacing:0.04em; }
+  table.compare{ width:100%; border-collapse:collapse; font-size:14px; }
+  table.compare td{ padding:8px 4px; border-bottom:1px solid #2C3A47; }
+  table.compare td:first-child{ color:#7E8FA0; }
+  table.compare td:last-child{ text-align:right; font-family:'SFMono-Regular',monospace; }
+  table.items{ width:100%; border-collapse:collapse; font-size:12px; margin-bottom:10px; }
+  table.items td{ padding:5px 4px; border-bottom:1px solid #212D3A; color:#C9D2DB; }
+  table.items td:first-child{ color:#F0EDE4; font-weight:600; }
+  .muted{ color:#7E8FA0; font-size:13px; }
+  .diff-pos{ color:#F0A23C; } .diff-neg{ color:#5FBFAE; }
+</style></head>
+<body>
+  <h1>Tag ${dayIdx+1} · ${d.route.replace(/<[^>]+>/g,'')}</h1>
+  <div class="sub">${d.km} · ${d.hm} · ${d.zeit} Fahrzeit</div>
+
+  <h2>Ziel vs. Ist (Modell ${activeModel+1})</h2>
+  <table class="compare">
+    <tr><td>Kalorien Ziel</td><td>${target.kcal} kcal</td></tr>
+    <tr><td>Kalorien erfasst</td><td>${Math.round(istKcal)} kcal</td></tr>
+    <tr><td>Differenz</td><td class="${diffKcal>=0?'diff-pos':'diff-neg'}">${diffKcal>=0?'+':''}${diffKcal} kcal</td></tr>
+    <tr><td>Kohlenhydrate Ziel / Ist</td><td>${target.kh} / ${round(istKh)} g</td></tr>
+    <tr><td>Eiweiß Ziel / Ist</td><td>${target.ew} / ${round(istEw)} g</td></tr>
+    <tr><td>Fett Ziel / Ist</td><td>${target.ft} / ${round(istFt)} g</td></tr>
+  </table>
+
+  <h2>Erfasste Lebensmittel</h2>
+  ${itemsHtml}
+</body></html>`;
+
+  const blob = new Blob([html], { type: 'text/html' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Transalp-Tag${dayIdx+1}-Bericht.html`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+document.getElementById('reportBtn').addEventListener('click', buildDayReport);
+
+render();
+</script>
+
+</body>
+</html>
