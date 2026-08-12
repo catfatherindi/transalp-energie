@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="de" data-app-version="2026.08.12-1">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -58,6 +58,22 @@
   }
 
   .content{ position: relative; z-index: 1; padding: 26px 24px 20px; height: 100%; overflow-y: auto; }
+
+  .update-banner{
+    display: none; align-items: center; justify-content: space-between;
+    background: rgba(95,191,174,0.12); border: 1px solid var(--accent-effort);
+    border-radius: 12px; padding: 10px 14px; margin-bottom: 14px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-primary);
+    cursor: pointer;
+  }
+  .update-banner.show{ display: flex; }
+  .update-banner .update-go{ color: var(--accent-effort); font-weight: 600; text-transform: uppercase; letter-spacing: 0.04em; font-size: 10px; }
+
+  .update-check-row{
+    text-align: center; margin-top: 10px; padding-bottom: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 9.5px; color: var(--text-muted);
+    letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer;
+  }
 
   .eyebrow{ font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.14em; color: var(--accent-effort); text-transform: uppercase; display: flex; justify-content: space-between; align-items: center; }
   .eyebrow span.dim{ color: var(--text-muted); }
@@ -252,6 +268,11 @@
 <div class="screen" id="screen">
   <div class="content">
 
+    <div class="update-banner" id="updateBanner">
+      <span>🔄 Update verfügbar</span>
+      <span class="update-go">Jetzt aktualisieren</span>
+    </div>
+
     <div class="eyebrow">
       <span>Transalp E‑MTB</span>
       <span class="dim" id="dayCounter">Tag 1 / 6</span>
@@ -306,6 +327,7 @@
     </div>
 
     <div class="week">Woche gesamt <b>31.700 kcal</b> · Ø <b>5.290 kcal</b>/Tag</div>
+    <div class="update-check-row" id="updateCheckRow">Nach Updates suchen</div>
 
   </div>
 
@@ -431,7 +453,46 @@ const foodDB = {
   'kokosmilch':       { kcal:230, kh:6,  ew:2,  ft:24 },
   'erdnuesse':        { kcal:567, kh:16, ew:25, ft:49 },
   'cashewkerne':      { kcal:553, kh:30, ew:18, ft:44 },
-  'chiasamen':        { kcal:486, kh:42, ew:17, ft:31 }
+  'chiasamen':        { kcal:486, kh:42, ew:17, ft:31 },
+  // Obst
+  'erdbeeren':        { kcal:32,  kh:8,  ew:1,  ft:0.3 },
+  'blaubeeren':       { kcal:57,  kh:14, ew:1,  ft:0.3 },
+  'orange':           { kcal:47,  kh:12, ew:1,  ft:0.1 },
+  'birne':            { kcal:57,  kh:15, ew:0.4,ft:0.1 },
+  'trauben':          { kcal:69,  kh:18, ew:1,  ft:0.2 },
+  'wassermelone':     { kcal:30,  kh:8,  ew:1,  ft:0.2 },
+  // Gemüse
+  'karotten':         { kcal:41,  kh:10, ew:1,  ft:0.2 },
+  'brokkoli':         { kcal:34,  kh:7,  ew:3,  ft:0.4 },
+  'spinat':           { kcal:23,  kh:4,  ew:3,  ft:0.4 },
+  'paprika':          { kcal:31,  kh:6,  ew:1,  ft:0.3 },
+  'gurke':            { kcal:15,  kh:4,  ew:1,  ft:0.1 },
+  'tomaten':          { kcal:18,  kh:4,  ew:1,  ft:0.2 },
+  'zucchini':         { kcal:17,  kh:3,  ew:1,  ft:0.3 },
+  'suesskartoffel':   { kcal:86,  kh:20, ew:2,  ft:0.1 },
+  'mais':             { kcal:96,  kh:21, ew:3,  ft:1.5 },
+  'erbsen':           { kcal:81,  kh:14, ew:5,  ft:0.4 },
+  'zwiebeln':         { kcal:40,  kh:9,  ew:1,  ft:0.1 },
+  'champignons':      { kcal:22,  kh:3,  ew:3,  ft:0.3 },
+  // Getreide
+  'quinoa':           { kcal:120, kh:21, ew:4,  ft:2 },
+  'bulgur':           { kcal:83,  kh:19, ew:3,  ft:0.2 },
+  'couscous':         { kcal:112, kh:23, ew:4,  ft:0.2 },
+  'buchweizen':       { kcal:92,  kh:20, ew:3,  ft:0.6 },
+  'vollkornnudeln':   { kcal:124, kh:25, ew:5,  ft:1 },
+  // Kerne
+  'sonnenblumenkerne':{ kcal:584, kh:20, ew:21, ft:51 },
+  'kuerbiskerne':     { kcal:559, kh:11, ew:30, ft:49 },
+  // Sonstiges
+  'hummus':           { kcal:166, kh:14, ew:8,  ft:10 },
+  'ahornsirup':       { kcal:260, kh:67, ew:0,  ft:0 },
+  'kokosoel':         { kcal:862, kh:0,  ew:0,  ft:100 },
+  'veganewurst':      { kcal:200, kh:5,  ew:15, ft:14 },
+  'veganerkaese':     { kcal:280, kh:5,  ew:3,  ft:26 },
+  // Sportnahrung (fürs Bike)
+  'energieriegel':    { kcal:380, kh:65, ew:8,  ft:9 },
+  'sportgel':         { kcal:260, kh:64, ew:0,  ft:0 },
+  'isogetraenk':      { kcal:24,  kh:6,  ew:0,  ft:0 }
 };
 
 // Synonyme/Schreibweisen -> Schlüssel in foodDB
@@ -459,7 +520,31 @@ const foodSynonyms = {
   'olivenöl':'olivenoel',
   'erdnuss':'erdnuesse','erdnüsse':'erdnuesse',
   'cashew':'cashewkerne','cashewkern':'cashewkerne','cashews':'cashewkerne',
-  'chia':'chiasamen'
+  'chia':'chiasamen',
+  'erdbeere':'erdbeeren',
+  'blaubeere':'blaubeeren','heidelbeeren':'blaubeeren','heidelbeere':'blaubeeren',
+  'orangen':'orange',
+  'birnen':'birne',
+  'traube':'trauben',
+  'melone':'wassermelone',
+  'karotte':'karotten','möhren':'karotten','moehren':'karotten','moehre':'karotten',
+  'broccoli':'brokkoli',
+  'blattspinat':'spinat',
+  'paprikaschote':'paprika',
+  'gurken':'gurke',
+  'tomate':'tomaten',
+  'suesskartoffeln':'suesskartoffel','süsskartoffel':'suesskartoffel','batate':'suesskartoffel',
+  'zwiebel':'zwiebeln',
+  'pilze':'champignons','champignon':'champignons',
+  'sonnenblumenkern':'sonnenblumenkerne',
+  'kuerbiskern':'kuerbiskerne','kürbiskerne':'kuerbiskerne','kürbiskern':'kuerbiskerne',
+  'ahornsirup':'ahornsirup',
+  'kokosöl':'kokosoel',
+  'vegane wurst':'veganewurst','veganwurst':'veganewurst','veggiewurst':'veganewurst',
+  'veganer käse':'veganerkaese','veganer kaese':'veganerkaese','veganchäse':'veganerkaese',
+  'riegel':'energieriegel','proteinriegel':'energieriegel',
+  'gel':'sportgel','energiegel':'sportgel',
+  'isotonisches getränk':'isogetraenk','iso getränk':'isogetraenk','sportgetränk':'isogetraenk'
 };
 
 function normalizeFoodText(s){
@@ -1041,6 +1126,59 @@ function buildDayReport(){
 }
 
 document.getElementById('reportBtn').addEventListener('click', buildDayReport);
+
+/* ================= Update-Check ================= */
+const CURRENT_VERSION = document.documentElement.dataset.appVersion;
+let latestKnownVersion = null;
+
+async function fetchRemoteVersion(){
+  try{
+    const url = window.location.origin + window.location.pathname + '?_=' + Date.now();
+    const res = await fetch(url, { cache: 'no-store' });
+    if(!res.ok) return null;
+    const text = await res.text();
+    const match = text.match(/data-app-version="([^"]+)"/);
+    return match ? match[1] : null;
+  } catch(e){
+    return null;
+  }
+}
+
+function applyUpdate(){
+  const url = window.location.origin + window.location.pathname + '?v=' + Date.now();
+  window.location.href = url;
+}
+
+async function checkForUpdate(manual){
+  const row = document.getElementById('updateCheckRow');
+  if(manual) row.textContent = 'Prüfe …';
+  const remote = await fetchRemoteVersion();
+  if(manual) row.textContent = 'Nach Updates suchen';
+
+  if(!remote){
+    if(manual) showTempMessage(row, 'Prüfung fehlgeschlagen – offline?');
+    return;
+  }
+  latestKnownVersion = remote;
+  if(remote !== CURRENT_VERSION){
+    document.getElementById('updateBanner').classList.add('show');
+    if(manual) showTempMessage(row, `Update gefunden (${remote})`);
+  } else if(manual){
+    showTempMessage(row, 'Du hast bereits die neueste Version ✓');
+  }
+}
+
+function showTempMessage(el, msg){
+  const original = 'Nach Updates suchen';
+  el.textContent = msg;
+  setTimeout(() => { el.textContent = original; }, 2500);
+}
+
+document.getElementById('updateCheckRow').addEventListener('click', () => checkForUpdate(true));
+document.getElementById('updateBanner').addEventListener('click', applyUpdate);
+
+// leiser Hintergrund-Check kurz nach dem Start
+setTimeout(() => checkForUpdate(false), 1500);
 
 render();
 </script>
