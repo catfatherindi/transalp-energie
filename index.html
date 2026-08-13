@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" data-app-version="2026.08.12-11">
+<html lang="de" data-app-version="2026.08.12-12">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -548,6 +548,10 @@
         <div class="field-row" id="extraWeightRow" style="display:none;">
           <div class="field-label">Zusätzliches Gewicht <span class="opt">– Rucksack, Gepäck etc. (kg)</span></div>
           <input class="field-input" type="number" inputmode="decimal" id="inExtraWeight" placeholder="z. B. 10">
+        </div>
+        <div class="field-row" id="knownWattRow" style="display:none;">
+          <div class="field-label">Ø Watt <span class="opt">(optional – überschreibt die Streckenschätzung, z. B. von einem Wattmesser)</span></div>
+          <input class="field-input" type="number" inputmode="decimal" id="inKnownWatt" placeholder="z. B. 117">
         </div>
         <div class="field-row" id="paceRow" style="display:flex; gap:10px;">
           <div style="flex:1;">
@@ -1698,7 +1702,7 @@ function switchTab(tab){
 }
 
 /* ================= Tab "Daten": eigener Rechner ================= */
-const customFieldIds = ['inKm','inHm','inHeight','inWeight','inAge','inVo2max','inPace5k','inBmrOverride','inHrRest','inHrMax','inHrAvg','inEbikePercent','inBikeWeight','inExtraWeight','inFlatSpeed','inClimbRate'];
+const customFieldIds = ['inKm','inHm','inHeight','inWeight','inAge','inVo2max','inPace5k','inBmrOverride','inHrRest','inHrMax','inHrAvg','inEbikePercent','inBikeWeight','inExtraWeight','inFlatSpeed','inClimbRate','inKnownWatt'];
 const activityProfiles = {
   lauf: { flatSpeed: 10, climbRate: 300, flatCostPerKgKm: 1.0 },
   rad:  { flatSpeed: 16, climbRate: 400, flatCostPerKgKm: 0.35 }
@@ -1709,12 +1713,15 @@ let customActivity = 'lauf';
 let customGender = 'm';
 
 // gespeicherte Eingaben laden
+let paceManuallyEdited = { flat: false, climb: false };
 try{
   const saved = localStorage.getItem('custom-calc-inputs');
   if(saved){
     const data = JSON.parse(saved);
     customFieldIds.forEach(id => { if(data[id] !== undefined) document.getElementById(id).value = data[id]; });
     terrainFieldIds.forEach(id => { if(data[id] !== undefined) document.getElementById(id).value = data[id]; });
+    if(data.inFlatSpeed) paceManuallyEdited.flat = true;
+    if(data.inClimbRate) paceManuallyEdited.climb = true;
     if(data.activity) customActivity = data.activity;
     if(data.gender) customGender = data.gender;
     if(data.ebike) document.getElementById('inEbike').checked = true;
@@ -1747,6 +1754,7 @@ function updateEbikeVisibility(){
   document.getElementById('ebikeRow').style.display = isRad ? 'block' : 'none';
   document.getElementById('bikeWeightRow').style.display = isRad ? 'block' : 'none';
   document.getElementById('extraWeightRow').style.display = isRad ? 'block' : 'none';
+  document.getElementById('knownWattRow').style.display = isRad ? 'block' : 'none';
   updateEbikeSubfields();
   applyPaceDefaults();
 }
@@ -1755,11 +1763,14 @@ function applyPaceDefaults(){
   const profile = activityProfiles[customActivity];
   const flatInput = document.getElementById('inFlatSpeed');
   const climbInput = document.getElementById('inClimbRate');
-  if(!flatInput.value) flatInput.value = profile.flatSpeed;
-  if(!climbInput.value) climbInput.value = profile.climbRate;
+  if(!paceManuallyEdited.flat) flatInput.value = profile.flatSpeed;
+  if(!paceManuallyEdited.climb) climbInput.value = profile.climbRate;
   flatInput.placeholder = profile.flatSpeed;
   climbInput.placeholder = profile.climbRate;
 }
+
+document.getElementById('inFlatSpeed').addEventListener('input', () => { paceManuallyEdited.flat = true; });
+document.getElementById('inClimbRate').addEventListener('input', () => { paceManuallyEdited.climb = true; });
 
 function updateEbikeSubfields(){
   const checked = document.getElementById('inEbike').checked;
@@ -1986,9 +1997,17 @@ function runCustomCalc(){
   const climbTimeH = hm / climbRate;
   const timeH = flatTimeH + climbTimeH;
 
-  const climbMechanicalKcal = systemMass * 9.81 * hm / 4184 * riderFactor;
-  const climbMetabolicKcal = climbMechanicalKcal / efficiency;
-  const activityKcal = flatKcal + climbMetabolicKcal;
+  const knownWatt = customActivity === 'rad' ? (parseFloat(document.getElementById('inKnownWatt').value) || 0) : 0;
+
+  let activityKcal;
+  if(knownWatt > 0){
+    // Gleiche Formel wie in Home: Watt × Zeit ÷ Wirkungsgrad ÷ 4184 – direkt aus gemessener Leistung
+    activityKcal = (knownWatt * timeH * 3600) / efficiency / 4184;
+  } else {
+    const climbMechanicalKcal = systemMass * 9.81 * hm / 4184 * riderFactor;
+    const climbMetabolicKcal = climbMechanicalKcal / efficiency;
+    activityKcal = flatKcal + climbMetabolicKcal;
+  }
 
   const restKcal = bmr * (24 - timeH) / 24;
 
