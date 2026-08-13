@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" data-app-version="2026.08.12-6">
+<html lang="de" data-app-version="2026.08.12-11">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -136,6 +136,34 @@
     color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 13px; text-align: right;
   }
   .ebike-percent-input:disabled{ color: var(--text-muted); }
+
+  .terrain-header{ display: flex; gap: 8px; margin-bottom: 6px; padding: 0 2px; }
+  .terrain-header-label{ flex: 1.2; }
+  .terrain-header-col{
+    flex: 1; text-align: center;
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .terrain-row{ display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+  .terrain-label{
+    flex: 1.2; font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-primary);
+  }
+  .terrain-input{ flex: 1; text-align: center; padding: 8px 6px; font-size: 13px; }
+  .terrain-sum{
+    text-align: right; font-family: 'JetBrains Mono', monospace; font-size: 10px;
+    color: var(--text-muted); margin-top: 2px; padding-right: 2px;
+  }
+  .terrain-sum.match{ color: var(--accent-effort); }
+  .terrain-sum.over{ color: #D97A6C; }
+
+  .terrain-toggle{
+    display: flex; align-items: center; justify-content: center; gap: 6px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted);
+    letter-spacing: 0.05em; text-transform: uppercase; cursor: pointer; margin-bottom: 12px;
+  }
+  .terrain-toggle .chev{ color: var(--accent-fuel); font-size: 11px; transition: transform 0.2s; }
+  .terrain-toggle.open .chev{ transform: rotate(180deg); }
+  .terrain-panel{ margin-bottom: 16px; }
 
   .calc-hero{
     position: relative; border-radius: 18px;
@@ -393,6 +421,41 @@
       <div class="hr-field"><div class="hr-label">Ø-Puls Etappe</div><input class="hr-input" type="number" inputmode="numeric" id="homeHrAvg" placeholder="130"></div>
     </div>
 
+    <div class="terrain-toggle" id="homeTerrainToggle">Untergrund eintragen <span class="chev">▾</span></div>
+    <div class="terrain-panel" id="homeTerrainPanel" style="display:none;">
+      <div class="terrain-header">
+        <div class="terrain-header-label"></div>
+        <div class="terrain-header-col">km</div>
+        <div class="terrain-header-col">%</div>
+      </div>
+      <div class="field-row terrain-row" data-terrain="strasse">
+        <div class="terrain-label">Straße</div>
+        <input class="field-input terrain-input" type="number" inputmode="decimal" id="homeTerrain_strasse_km">
+        <input class="field-input terrain-input" type="number" inputmode="decimal" id="homeTerrain_strasse_pct">
+      </div>
+      <div class="field-row terrain-row" data-terrain="waldweg">
+        <div class="terrain-label">Waldweg</div>
+        <input class="field-input terrain-input" type="number" inputmode="decimal" id="homeTerrain_waldweg_km">
+        <input class="field-input terrain-input" type="number" inputmode="decimal" id="homeTerrain_waldweg_pct">
+      </div>
+      <div class="field-row terrain-row" data-terrain="schotter">
+        <div class="terrain-label">Schotter</div>
+        <input class="field-input terrain-input" type="number" inputmode="decimal" id="homeTerrain_schotter_km">
+        <input class="field-input terrain-input" type="number" inputmode="decimal" id="homeTerrain_schotter_pct">
+      </div>
+      <div class="field-row terrain-row" data-terrain="geroell">
+        <div class="terrain-label">Geröll</div>
+        <input class="field-input terrain-input" type="number" inputmode="decimal" id="homeTerrain_geroell_km">
+        <input class="field-input terrain-input" type="number" inputmode="decimal" id="homeTerrain_geroell_pct">
+      </div>
+      <div class="field-row terrain-row" data-terrain="sand">
+        <div class="terrain-label">Sand</div>
+        <input class="field-input terrain-input" type="number" inputmode="decimal" id="homeTerrain_sand_km">
+        <input class="field-input terrain-input" type="number" inputmode="decimal" id="homeTerrain_sand_pct">
+      </div>
+      <div class="terrain-sum" id="homeTerrainSum">Ohne Angabe: ursprüngliche Schätzung (Ø gemischtes Alpin-Gelände)</div>
+    </div>
+
     <div class="hero" id="heroTap">
       <svg viewBox="0 0 400 190" preserveAspectRatio="none">
         <defs>
@@ -478,6 +541,59 @@
             </div>
           </div>
         </div>
+        <div class="field-row" id="bikeWeightRow" style="display:none;">
+          <div class="field-label">Gewicht Fahrrad (kg)</div>
+          <input class="field-input" type="number" inputmode="decimal" id="inBikeWeight" placeholder="z. B. 20">
+        </div>
+        <div class="field-row" id="extraWeightRow" style="display:none;">
+          <div class="field-label">Zusätzliches Gewicht <span class="opt">– Rucksack, Gepäck etc. (kg)</span></div>
+          <input class="field-input" type="number" inputmode="decimal" id="inExtraWeight" placeholder="z. B. 10">
+        </div>
+        <div class="field-row" id="paceRow" style="display:flex; gap:10px;">
+          <div style="flex:1;">
+            <div class="field-label">Tempo flach <span class="opt">(km/h)</span></div>
+            <input class="field-input" type="number" inputmode="decimal" id="inFlatSpeed" placeholder="10">
+          </div>
+          <div style="flex:1;">
+            <div class="field-label">Steigrate <span class="opt">(Hm/h)</span></div>
+            <input class="field-input" type="number" inputmode="decimal" id="inClimbRate" placeholder="300">
+          </div>
+        </div>
+      </div>
+
+      <div class="field-group">
+        <div class="field-group-title">Untergrund <span class="opt">(km oder % eintragen – die andere Spalte rechnet mit)</span></div>
+        <div class="terrain-header">
+          <div class="terrain-header-label"></div>
+          <div class="terrain-header-col">km</div>
+          <div class="terrain-header-col">%</div>
+        </div>
+        <div class="field-row terrain-row" data-terrain="strasse">
+          <div class="terrain-label">Straße</div>
+          <input class="field-input terrain-input" type="number" inputmode="decimal" id="terrain_strasse_km">
+          <input class="field-input terrain-input" type="number" inputmode="decimal" id="terrain_strasse_pct">
+        </div>
+        <div class="field-row terrain-row" data-terrain="waldweg">
+          <div class="terrain-label">Waldweg</div>
+          <input class="field-input terrain-input" type="number" inputmode="decimal" id="terrain_waldweg_km">
+          <input class="field-input terrain-input" type="number" inputmode="decimal" id="terrain_waldweg_pct">
+        </div>
+        <div class="field-row terrain-row" data-terrain="schotter">
+          <div class="terrain-label">Schotter</div>
+          <input class="field-input terrain-input" type="number" inputmode="decimal" id="terrain_schotter_km">
+          <input class="field-input terrain-input" type="number" inputmode="decimal" id="terrain_schotter_pct">
+        </div>
+        <div class="field-row terrain-row" data-terrain="geroell">
+          <div class="terrain-label">Geröll</div>
+          <input class="field-input terrain-input" type="number" inputmode="decimal" id="terrain_geroell_km">
+          <input class="field-input terrain-input" type="number" inputmode="decimal" id="terrain_geroell_pct">
+        </div>
+        <div class="field-row terrain-row" data-terrain="sand">
+          <div class="terrain-label">Sand</div>
+          <input class="field-input terrain-input" type="number" inputmode="decimal" id="terrain_sand_km">
+          <input class="field-input terrain-input" type="number" inputmode="decimal" id="terrain_sand_pct">
+        </div>
+        <div class="terrain-sum" id="terrainSum">Summe: 0,0 km</div>
       </div>
 
       <div class="field-group">
@@ -919,6 +1035,14 @@ const days = [
   }
 ];
 
+const terrainTypes = [
+  { id: 'strasse',  label: 'Straße',  factor: 1.0 },
+  { id: 'waldweg',  label: 'Waldweg', factor: 1.15 },
+  { id: 'schotter', label: 'Schotter', factor: 1.3 },
+  { id: 'geroell',  label: 'Geröll',  factor: 1.6 },
+  { id: 'sand',     label: 'Sand',    factor: 2.2 }
+];
+
 const modelMeta = [
   { label: 'Voller\nAusgleich', note: 'Der komplette Tagesverbrauch wird 1:1 über Nahrung zurückgeführt – Gewicht bleibt stabil, volle Regeneration für den nächsten Tag.' },
   { label: 'Rekomp-\nosition', note: 'Ca. 10 % Kaloriendefizit bei hohem, fixem Eiweiß (185 g). Der Körper zieht die fehlende Energie bevorzugt aus Fettreserven, während genug Aminosäuren für Muskelerhalt/-aufbau vorhanden sind.' },
@@ -962,6 +1086,7 @@ function render(){
   document.getElementById('profileLine').setAttribute('d', d.lineD);
 
   loadHomeHR(current);
+  loadHomeTerrain(current);
   renderHomeKcal();
 
   [...pager.children].forEach((el, i) => el.classList.toggle('active', i === current));
@@ -1002,18 +1127,106 @@ function saveHomeHR(dayIdx){
   } catch(e){}
 }
 
+const homeTerrainIds = ['strasse','waldweg','schotter','geroell','sand'].flatMap(t => [`homeTerrain_${t}_km`, `homeTerrain_${t}_pct`]);
+
+function loadHomeTerrain(dayIdx){
+  try{
+    const raw = localStorage.getItem('home-terrain-day' + dayIdx);
+    const data = raw ? JSON.parse(raw) : {};
+    homeTerrainIds.forEach(id => document.getElementById(id).value = data[id] || '');
+  } catch(e){
+    homeTerrainIds.forEach(id => document.getElementById(id).value = '');
+  }
+  updateHomeTerrainSum();
+}
+
+function saveHomeTerrain(dayIdx){
+  try{
+    const data = {};
+    homeTerrainIds.forEach(id => data[id] = document.getElementById(id).value);
+    localStorage.setItem('home-terrain-day' + dayIdx, JSON.stringify(data));
+  } catch(e){}
+}
+
+function homeTerrainKmChanged(id){
+  const d = days[current];
+  const totalKm = parseFloat(d.km) || 0;
+  const kmVal = parseFloat(document.getElementById(`homeTerrain_${id}_km`).value) || 0;
+  if(totalKm > 0){
+    document.getElementById(`homeTerrain_${id}_pct`).value = Math.round((kmVal/totalKm)*1000)/10;
+  }
+  updateHomeTerrainSum();
+  saveHomeTerrain(current);
+  renderHomeKcal();
+}
+
+function homeTerrainPctChanged(id){
+  const d = days[current];
+  const totalKm = parseFloat(d.km) || 0;
+  const pctVal = parseFloat(document.getElementById(`homeTerrain_${id}_pct`).value) || 0;
+  if(totalKm > 0){
+    document.getElementById(`homeTerrain_${id}_km`).value = Math.round((pctVal/100)*totalKm*10)/10;
+  }
+  updateHomeTerrainSum();
+  saveHomeTerrain(current);
+  renderHomeKcal();
+}
+
+function updateHomeTerrainSum(){
+  let sumKm = 0;
+  terrainTypes.forEach(t => { sumKm += parseFloat(document.getElementById(`homeTerrain_${t.id}_km`).value) || 0; });
+  const el = document.getElementById('homeTerrainSum');
+  if(sumKm > 0){
+    el.textContent = `Summe: ${(Math.round(sumKm*10)/10).toLocaleString('de-DE')} km`;
+  } else {
+    el.textContent = 'Ohne Angabe: ursprüngliche Schätzung (Ø gemischtes Alpin-Gelände)';
+  }
+}
+
+terrainTypes.forEach(t => {
+  document.getElementById(`homeTerrain_${t.id}_km`).addEventListener('input', () => homeTerrainKmChanged(t.id));
+  document.getElementById(`homeTerrain_${t.id}_pct`).addEventListener('input', () => homeTerrainPctChanged(t.id));
+});
+
+const homeTerrainToggleEl = document.getElementById('homeTerrainToggle');
+homeTerrainToggleEl.addEventListener('click', () => {
+  const panel = document.getElementById('homeTerrainPanel');
+  const open = panel.style.display !== 'none';
+  panel.style.display = open ? 'none' : 'block';
+  homeTerrainToggleEl.classList.toggle('open', !open);
+});
+
+// Referenz-Faktor, von dem die ursprünglichen Home-Werte implizit ausgehen (gemischtes Alpin-Gelände)
+const HOME_BASELINE_TERRAIN_FACTOR = 1.2;
+
+function getHomeTerrainAdjustment(){
+  let sumKm = 0, weighted = 0;
+  terrainTypes.forEach(t => {
+    const segKm = parseFloat(document.getElementById(`homeTerrain_${t.id}_km`).value) || 0;
+    sumKm += segKm;
+    weighted += segKm * t.factor;
+  });
+  if(sumKm <= 0) return 1; // keine Angabe -> ursprüngliche Schätzung unverändert
+  const weightedFactor = weighted / sumKm;
+  const adjustment = weightedFactor / HOME_BASELINE_TERRAIN_FACTOR;
+  return Math.min(Math.max(adjustment, 0.5), 2.5); // Sicherheitsbegrenzung
+}
+
 function renderHomeKcal(){
   const d = days[current];
   const restHR = parseFloat(document.getElementById('homeHrRest').value) || 0;
   const maxHR = parseFloat(document.getElementById('homeHrMax').value) || 0;
   const avgHR = parseFloat(document.getElementById('homeHrAvg').value) || 0;
 
+  const terrainAdjustment = getHomeTerrainAdjustment();
+  const adjustedAktivKcal = d.aktivKcal * terrainAdjustment;
+
   const epocPct = computeEpocPct(restHR, maxHR, avgHR, 179); // Fallback-Maxpuls für Alter ~42
-  const epocKcal = d.aktivKcal * epocPct;
-  const totalKcal = d.aktivKcal + d.basalKcal + epocKcal;
+  const epocKcal = adjustedAktivKcal * epocPct;
+  const totalKcal = adjustedAktivKcal + d.basalKcal + epocKcal;
 
   document.getElementById('kcal').textContent = Math.round(totalKcal).toLocaleString('de-DE');
-  document.getElementById('bdAktiv').textContent = fmtKcal(d.aktivKcal);
+  document.getElementById('bdAktiv').textContent = fmtKcal(adjustedAktivKcal);
   document.getElementById('bdBasal').textContent = fmtKcal(d.basalKcal);
   document.getElementById('bdEpoc').textContent = fmtKcal(epocKcal);
 }
@@ -1485,10 +1698,15 @@ function switchTab(tab){
 }
 
 /* ================= Tab "Daten": eigener Rechner ================= */
-const customFieldIds = ['inKm','inHm','inHeight','inWeight','inAge','inVo2max','inPace5k','inBmrOverride','inHrRest','inHrMax','inHrAvg','inEbikePercent'];
+const customFieldIds = ['inKm','inHm','inHeight','inWeight','inAge','inVo2max','inPace5k','inBmrOverride','inHrRest','inHrMax','inHrAvg','inEbikePercent','inBikeWeight','inExtraWeight','inFlatSpeed','inClimbRate'];
+const activityProfiles = {
+  lauf: { flatSpeed: 10, climbRate: 300, flatCostPerKgKm: 1.0 },
+  rad:  { flatSpeed: 16, climbRate: 400, flatCostPerKgKm: 0.35 }
+};
+const ebikePresets = { eco: 35, tour: 55, turbo: 75 };
+const terrainFieldIds = terrainTypes.flatMap(t => [`terrain_${t.id}_km`, `terrain_${t.id}_pct`]);
 let customActivity = 'lauf';
 let customGender = 'm';
-const ebikePresets = { eco: 35, tour: 55, turbo: 75 };
 
 // gespeicherte Eingaben laden
 try{
@@ -1496,6 +1714,7 @@ try{
   if(saved){
     const data = JSON.parse(saved);
     customFieldIds.forEach(id => { if(data[id] !== undefined) document.getElementById(id).value = data[id]; });
+    terrainFieldIds.forEach(id => { if(data[id] !== undefined) document.getElementById(id).value = data[id]; });
     if(data.activity) customActivity = data.activity;
     if(data.gender) customGender = data.gender;
     if(data.ebike) document.getElementById('inEbike').checked = true;
@@ -1524,9 +1743,22 @@ document.querySelectorAll('#inGender .opt-btn').forEach(btn => {
 
 /* ---- E-Bike Zusatzfelder ---- */
 function updateEbikeVisibility(){
-  const row = document.getElementById('ebikeRow');
-  row.style.display = customActivity === 'rad' ? 'block' : 'none';
+  const isRad = customActivity === 'rad';
+  document.getElementById('ebikeRow').style.display = isRad ? 'block' : 'none';
+  document.getElementById('bikeWeightRow').style.display = isRad ? 'block' : 'none';
+  document.getElementById('extraWeightRow').style.display = isRad ? 'block' : 'none';
   updateEbikeSubfields();
+  applyPaceDefaults();
+}
+
+function applyPaceDefaults(){
+  const profile = activityProfiles[customActivity];
+  const flatInput = document.getElementById('inFlatSpeed');
+  const climbInput = document.getElementById('inClimbRate');
+  if(!flatInput.value) flatInput.value = profile.flatSpeed;
+  if(!climbInput.value) climbInput.value = profile.climbRate;
+  flatInput.placeholder = profile.flatSpeed;
+  climbInput.placeholder = profile.climbRate;
 }
 
 function updateEbikeSubfields(){
@@ -1567,6 +1799,7 @@ updateEbikeVisibility();
 
 customFieldIds.forEach(id => {
   document.getElementById(id).addEventListener('input', () => {
+    if(id === 'inKm') updateTerrainSum();
     saveCustomInputs();
     runCustomCalc();
   });
@@ -1575,12 +1808,59 @@ customFieldIds.forEach(id => {
 function saveCustomInputs(){
   const data = {};
   customFieldIds.forEach(id => data[id] = document.getElementById(id).value);
+  terrainFieldIds.forEach(id => data[id] = document.getElementById(id).value);
   data.activity = customActivity;
   data.gender = customGender;
   data.ebike = document.getElementById('inEbike').checked;
   data.ebikeMode = document.getElementById('inEbikeMode').value;
   try{ localStorage.setItem('custom-calc-inputs', JSON.stringify(data)); }catch(e){}
 }
+
+/* ---- Untergrund: km <-> % Verknüpfung pro Zeile ---- */
+function terrainKmChanged(id){
+  const totalKm = parseFloat(document.getElementById('inKm').value) || 0;
+  const kmVal = parseFloat(document.getElementById(`terrain_${id}_km`).value) || 0;
+  const pctInput = document.getElementById(`terrain_${id}_pct`);
+  if(totalKm > 0){
+    pctInput.value = Math.round((kmVal / totalKm) * 1000) / 10;
+  }
+  updateTerrainSum();
+  saveCustomInputs();
+  runCustomCalc();
+}
+
+function terrainPctChanged(id){
+  const totalKm = parseFloat(document.getElementById('inKm').value) || 0;
+  const pctVal = parseFloat(document.getElementById(`terrain_${id}_pct`).value) || 0;
+  const kmInput = document.getElementById(`terrain_${id}_km`);
+  if(totalKm > 0){
+    kmInput.value = Math.round((pctVal / 100) * totalKm * 10) / 10;
+  }
+  updateTerrainSum();
+  saveCustomInputs();
+  runCustomCalc();
+}
+
+function updateTerrainSum(){
+  const totalKm = parseFloat(document.getElementById('inKm').value) || 0;
+  let sumKm = 0;
+  terrainTypes.forEach(t => { sumKm += parseFloat(document.getElementById(`terrain_${t.id}_km`).value) || 0; });
+  const el = document.getElementById('terrainSum');
+  const sumRounded = Math.round(sumKm * 10) / 10;
+  el.textContent = `Summe: ${sumRounded.toLocaleString('de-DE')} km` + (totalKm ? ` von ${totalKm.toLocaleString('de-DE')} km` : '');
+  el.classList.remove('match','over');
+  if(totalKm > 0){
+    if(Math.abs(sumKm - totalKm) < 0.15) el.classList.add('match');
+    else if(sumKm > totalKm) el.classList.add('over');
+  }
+}
+
+terrainTypes.forEach(t => {
+  document.getElementById(`terrain_${t.id}_km`).addEventListener('input', () => terrainKmChanged(t.id));
+  document.getElementById(`terrain_${t.id}_pct`).addEventListener('input', () => terrainPctChanged(t.id));
+});
+
+updateTerrainSum();
 
 function getEfficiency(vo2max, pace5k){
   if(vo2max){
@@ -1637,11 +1917,6 @@ function computeEpocPct(restHR, maxHR, avgHR, fallbackMaxHR){
 
 function fmtKcal(n){ return Math.round(n).toLocaleString('de-DE') + ' kcal'; }
 
-const activityProfiles = {
-  lauf: { flatSpeed: 10, climbRate: 300, flatCostPerKgKm: 1.0 },
-  rad:  { flatSpeed: 25, climbRate: 500, flatCostPerKgKm: 0.35 }
-};
-
 function runCustomCalc(){
   const km = parseFloat(document.getElementById('inKm').value) || 0;
   const hm = parseFloat(document.getElementById('inHm').value) || 0;
@@ -1670,10 +1945,18 @@ function runCustomCalc(){
   }
 
   const profile = activityProfiles[customActivity];
+  const flatSpeed = parseFloat(document.getElementById('inFlatSpeed').value) || profile.flatSpeed;
+  const climbRate = parseFloat(document.getElementById('inClimbRate').value) || profile.climbRate;
   const efficiency = getEfficiency(vo2max, pace5k);
   const bmr = bmrOverride || calcBMR(weight, height, age, customGender);
 
-  const timeH = km / profile.flatSpeed + hm / profile.climbRate;
+  // Systemgewicht (nur relevant bei Radfahren): Körper + Rad + zusätzliches Gepäck
+  let systemMass = weight;
+  if(customActivity === 'rad'){
+    const bikeWeight = parseFloat(document.getElementById('inBikeWeight').value) || 0;
+    const extraWeight = parseFloat(document.getElementById('inExtraWeight').value) || 0;
+    systemMass = weight + bikeWeight + extraWeight;
+  }
 
   // Motoranteil (nur relevant bei Radfahren + aktiviertem E-Bike-Haken)
   let motorShare = 0;
@@ -1683,8 +1966,27 @@ function runCustomCalc(){
   }
   const riderFactor = 1 - motorShare;
 
-  const flatKcal = profile.flatCostPerKgKm * weight * km * riderFactor;
-  const climbMechanicalKcal = weight * 9.81 * hm / 4184 * riderFactor;
+  // Untergrund: Strecke nach Belag aufgeteilt (falls ausgefüllt), sonst pauschal mit Faktor 1
+  let terrainKmTotal = 0;
+  let flatKcal = 0;
+  let flatTimeH = 0;
+  terrainTypes.forEach(t => {
+    const segKm = parseFloat(document.getElementById(`terrain_${t.id}_km`).value) || 0;
+    if(segKm > 0){
+      terrainKmTotal += segKm;
+      flatKcal += profile.flatCostPerKgKm * systemMass * segKm * t.factor * riderFactor;
+      flatTimeH += segKm / (flatSpeed / t.factor);
+    }
+  });
+  if(terrainKmTotal <= 0){
+    flatKcal = profile.flatCostPerKgKm * systemMass * km * riderFactor;
+    flatTimeH = km / flatSpeed;
+  }
+
+  const climbTimeH = hm / climbRate;
+  const timeH = flatTimeH + climbTimeH;
+
+  const climbMechanicalKcal = systemMass * 9.81 * hm / 4184 * riderFactor;
   const climbMetabolicKcal = climbMechanicalKcal / efficiency;
   const activityKcal = flatKcal + climbMetabolicKcal;
 
