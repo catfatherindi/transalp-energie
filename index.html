@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" data-app-version="2026.08.12-12">
+<html lang="de" data-app-version="2026.08.12-13">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -1155,9 +1155,13 @@ function saveHomeTerrain(dayIdx){
 function homeTerrainKmChanged(id){
   const d = days[current];
   const totalKm = parseFloat(d.km) || 0;
-  const kmVal = parseFloat(document.getElementById(`homeTerrain_${id}_km`).value) || 0;
-  if(totalKm > 0){
-    document.getElementById(`homeTerrain_${id}_pct`).value = Math.round((kmVal/totalKm)*1000)/10;
+  const kmInput = document.getElementById(`homeTerrain_${id}_km`);
+  const pctInput = document.getElementById(`homeTerrain_${id}_pct`);
+  if(kmInput.value.trim() === ''){
+    pctInput.value = '';
+  } else if(totalKm > 0){
+    const kmVal = parseFloat(kmInput.value) || 0;
+    pctInput.value = Math.round((kmVal/totalKm)*1000)/10;
   }
   updateHomeTerrainSum();
   saveHomeTerrain(current);
@@ -1167,9 +1171,13 @@ function homeTerrainKmChanged(id){
 function homeTerrainPctChanged(id){
   const d = days[current];
   const totalKm = parseFloat(d.km) || 0;
-  const pctVal = parseFloat(document.getElementById(`homeTerrain_${id}_pct`).value) || 0;
-  if(totalKm > 0){
-    document.getElementById(`homeTerrain_${id}_km`).value = Math.round((pctVal/100)*totalKm*10)/10;
+  const pctInput = document.getElementById(`homeTerrain_${id}_pct`);
+  const kmInput = document.getElementById(`homeTerrain_${id}_km`);
+  if(pctInput.value.trim() === ''){
+    kmInput.value = '';
+  } else if(totalKm > 0){
+    const pctVal = parseFloat(pctInput.value) || 0;
+    kmInput.value = Math.round((pctVal/100)*totalKm*10)/10;
   }
   updateHomeTerrainSum();
   saveHomeTerrain(current);
@@ -1830,9 +1838,12 @@ function saveCustomInputs(){
 /* ---- Untergrund: km <-> % Verknüpfung pro Zeile ---- */
 function terrainKmChanged(id){
   const totalKm = parseFloat(document.getElementById('inKm').value) || 0;
-  const kmVal = parseFloat(document.getElementById(`terrain_${id}_km`).value) || 0;
+  const kmInput = document.getElementById(`terrain_${id}_km`);
   const pctInput = document.getElementById(`terrain_${id}_pct`);
-  if(totalKm > 0){
+  if(kmInput.value.trim() === ''){
+    pctInput.value = '';
+  } else if(totalKm > 0){
+    const kmVal = parseFloat(kmInput.value) || 0;
     pctInput.value = Math.round((kmVal / totalKm) * 1000) / 10;
   }
   updateTerrainSum();
@@ -1842,9 +1853,12 @@ function terrainKmChanged(id){
 
 function terrainPctChanged(id){
   const totalKm = parseFloat(document.getElementById('inKm').value) || 0;
-  const pctVal = parseFloat(document.getElementById(`terrain_${id}_pct`).value) || 0;
+  const pctInput = document.getElementById(`terrain_${id}_pct`);
   const kmInput = document.getElementById(`terrain_${id}_km`);
-  if(totalKm > 0){
+  if(pctInput.value.trim() === ''){
+    kmInput.value = '';
+  } else if(totalKm > 0){
+    const pctVal = parseFloat(pctInput.value) || 0;
     kmInput.value = Math.round((pctVal / 100) * totalKm * 10) / 10;
   }
   updateTerrainSum();
