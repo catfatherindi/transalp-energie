@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" data-app-version="2026.08.12-5">
+<html lang="de" data-app-version="2026.08.12-6">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -111,6 +111,31 @@
     font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-muted); cursor: pointer;
   }
   .field-toggle .opt-btn.active{ border-color: var(--accent-effort); background: rgba(95,191,174,0.1); color: var(--accent-effort); font-weight: 600; }
+
+  .ebike-line{ display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .ebike-checkbox{
+    display: flex; align-items: center; gap: 7px;
+    font-family: 'Inter', sans-serif; font-size: 13px; color: var(--text-primary);
+    background: var(--bg-surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 9px 12px; cursor: pointer;
+  }
+  .ebike-checkbox input{ width: 15px; height: 15px; accent-color: var(--accent-effort); }
+  .ebike-select{
+    background: var(--bg-surface); border: 1px solid var(--line); border-radius: 10px;
+    color: var(--text-primary); font-family: 'Inter', sans-serif; font-size: 13px;
+    padding: 9px 10px; outline: none;
+  }
+  .ebike-percent{
+    display: flex; align-items: center; gap: 4px;
+    font-family: 'JetBrains Mono', monospace; font-size: 13px; color: var(--text-primary);
+    background: var(--bg-surface); border: 1px solid var(--line); border-radius: 10px;
+    padding: 9px 10px;
+  }
+  .ebike-percent-input{
+    width: 44px; background: transparent; border: none; outline: none;
+    color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 13px; text-align: right;
+  }
+  .ebike-percent-input:disabled{ color: var(--text-muted); }
 
   .calc-hero{
     position: relative; border-radius: 18px;
@@ -437,6 +462,20 @@
           <div class="field-toggle" id="inActivity">
             <div class="opt-btn active" data-val="lauf">Laufen</div>
             <div class="opt-btn" data-val="rad">Radfahren</div>
+          </div>
+        </div>
+        <div class="field-row" id="ebikeRow" style="display:none;">
+          <div class="ebike-line">
+            <label class="ebike-checkbox"><input type="checkbox" id="inEbike"> E-Bike</label>
+            <select class="ebike-select" id="inEbikeMode" style="display:none;">
+              <option value="eco">Eco</option>
+              <option value="tour" selected>Tour</option>
+              <option value="turbo">Turbo</option>
+              <option value="individuell">Individuell</option>
+            </select>
+            <div class="ebike-percent" id="ebikePercentWrap" style="display:none;">
+              <input type="number" class="ebike-percent-input" id="inEbikePercent" inputmode="decimal">%
+            </div>
           </div>
         </div>
       </div>
@@ -1446,9 +1485,10 @@ function switchTab(tab){
 }
 
 /* ================= Tab "Daten": eigener Rechner ================= */
-const customFieldIds = ['inKm','inHm','inHeight','inWeight','inAge','inVo2max','inPace5k','inBmrOverride','inHrRest','inHrMax','inHrAvg'];
+const customFieldIds = ['inKm','inHm','inHeight','inWeight','inAge','inVo2max','inPace5k','inBmrOverride','inHrRest','inHrMax','inHrAvg','inEbikePercent'];
 let customActivity = 'lauf';
 let customGender = 'm';
+const ebikePresets = { eco: 35, tour: 55, turbo: 75 };
 
 // gespeicherte Eingaben laden
 try{
@@ -1458,6 +1498,8 @@ try{
     customFieldIds.forEach(id => { if(data[id] !== undefined) document.getElementById(id).value = data[id]; });
     if(data.activity) customActivity = data.activity;
     if(data.gender) customGender = data.gender;
+    if(data.ebike) document.getElementById('inEbike').checked = true;
+    if(data.ebikeMode) document.getElementById('inEbikeMode').value = data.ebikeMode;
   }
 }catch(e){}
 
@@ -1466,6 +1508,8 @@ document.querySelectorAll('#inActivity .opt-btn').forEach(btn => {
   btn.addEventListener('click', () => {
     customActivity = btn.dataset.val;
     document.querySelectorAll('#inActivity .opt-btn').forEach(b => b.classList.toggle('active', b === btn));
+    updateEbikeVisibility();
+    saveCustomInputs();
     runCustomCalc();
   });
 });
@@ -1477,6 +1521,49 @@ document.querySelectorAll('#inGender .opt-btn').forEach(btn => {
     runCustomCalc();
   });
 });
+
+/* ---- E-Bike Zusatzfelder ---- */
+function updateEbikeVisibility(){
+  const row = document.getElementById('ebikeRow');
+  row.style.display = customActivity === 'rad' ? 'block' : 'none';
+  updateEbikeSubfields();
+}
+
+function updateEbikeSubfields(){
+  const checked = document.getElementById('inEbike').checked;
+  document.getElementById('inEbikeMode').style.display = checked ? 'block' : 'none';
+  document.getElementById('ebikePercentWrap').style.display = checked ? 'flex' : 'none';
+  if(checked) updateEbikePercentField();
+}
+
+function updateEbikePercentField(){
+  const mode = document.getElementById('inEbikeMode').value;
+  const percentInput = document.getElementById('inEbikePercent');
+  if(mode === 'individuell'){
+    percentInput.disabled = false;
+    if(!percentInput.value) percentInput.value = 55;
+  } else {
+    percentInput.value = ebikePresets[mode];
+    percentInput.disabled = true;
+  }
+}
+
+document.getElementById('inEbike').addEventListener('change', () => {
+  updateEbikeSubfields();
+  saveCustomInputs();
+  runCustomCalc();
+});
+document.getElementById('inEbikeMode').addEventListener('change', () => {
+  updateEbikePercentField();
+  saveCustomInputs();
+  runCustomCalc();
+});
+document.getElementById('inEbikePercent').addEventListener('input', () => {
+  saveCustomInputs();
+  runCustomCalc();
+});
+
+updateEbikeVisibility();
 
 customFieldIds.forEach(id => {
   document.getElementById(id).addEventListener('input', () => {
@@ -1490,6 +1577,8 @@ function saveCustomInputs(){
   customFieldIds.forEach(id => data[id] = document.getElementById(id).value);
   data.activity = customActivity;
   data.gender = customGender;
+  data.ebike = document.getElementById('inEbike').checked;
+  data.ebikeMode = document.getElementById('inEbikeMode').value;
   try{ localStorage.setItem('custom-calc-inputs', JSON.stringify(data)); }catch(e){}
 }
 
@@ -1586,8 +1675,16 @@ function runCustomCalc(){
 
   const timeH = km / profile.flatSpeed + hm / profile.climbRate;
 
-  const flatKcal = profile.flatCostPerKgKm * weight * km;
-  const climbMechanicalKcal = weight * 9.81 * hm / 4184;
+  // Motoranteil (nur relevant bei Radfahren + aktiviertem E-Bike-Haken)
+  let motorShare = 0;
+  if(customActivity === 'rad' && document.getElementById('inEbike').checked){
+    const percentVal = parseFloat(document.getElementById('inEbikePercent').value) || 0;
+    motorShare = Math.min(Math.max(percentVal / 100, 0), 0.95);
+  }
+  const riderFactor = 1 - motorShare;
+
+  const flatKcal = profile.flatCostPerKgKm * weight * km * riderFactor;
+  const climbMechanicalKcal = weight * 9.81 * hm / 4184 * riderFactor;
   const climbMetabolicKcal = climbMechanicalKcal / efficiency;
   const activityKcal = flatKcal + climbMetabolicKcal;
 
