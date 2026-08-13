@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" data-app-version="2026.08.12-3">
+<html lang="de" data-app-version="2026.08.12-5">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -145,6 +145,26 @@
   .hero-copy{ position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; padding-bottom: 12px; }
   .kcal-num{ font-family: 'Fjalla One', sans-serif; font-size: 52px; line-height: 1; text-shadow: 0 2px 18px rgba(0,0,0,0.5); }
   .kcal-lbl{ font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.16em; color: var(--accent-fuel); text-transform: uppercase; margin-top: 4px; }
+
+  .hr-field-row{ display: flex; gap: 10px; margin-bottom: 14px; }
+  .hr-field{ flex: 1; }
+  .hr-label{
+    font-family: 'JetBrains Mono', monospace; font-size: 9px; color: var(--text-muted);
+    text-transform: uppercase; letter-spacing: 0.03em; margin-bottom: 4px;
+  }
+  .hr-label .opt{ text-transform: none; letter-spacing: 0; opacity: 0.7; }
+  .hr-input{
+    width: 100%; background: var(--bg-surface); border: 1px solid var(--line); border-radius: 9px;
+    color: var(--text-primary); font-family: 'JetBrains Mono', monospace; font-size: 13px;
+    padding: 8px 8px; outline: none; text-align: center;
+  }
+
+  .kcal-breakdown{
+    display: flex; justify-content: space-between; flex-wrap: wrap; gap: 4px 10px;
+    font-family: 'JetBrains Mono', monospace; font-size: 10px; color: var(--text-muted);
+    margin: 4px 0 14px; padding: 0 2px;
+  }
+  .kcal-breakdown b{ color: var(--text-primary); font-weight: 600; }
 
   .tap-hint{
     display: flex; align-items: center; justify-content: center; gap: 6px;
@@ -342,6 +362,12 @@
       <div class="stat"><div class="val" id="zeit">~11,3 h</div><div class="lbl">Fahrzeit</div></div>
     </div>
 
+    <div class="hr-field-row">
+      <div class="hr-field"><div class="hr-label">Ruhepuls</div><input class="hr-input" type="number" inputmode="numeric" id="homeHrRest" placeholder="60"></div>
+      <div class="hr-field"><div class="hr-label">Maxpuls <span class="opt">(opt.)</span></div><input class="hr-input" type="number" inputmode="numeric" id="homeHrMax" placeholder="179"></div>
+      <div class="hr-field"><div class="hr-label">Ø-Puls Etappe</div><input class="hr-input" type="number" inputmode="numeric" id="homeHrAvg" placeholder="130"></div>
+    </div>
+
     <div class="hero" id="heroTap">
       <svg viewBox="0 0 400 190" preserveAspectRatio="none">
         <defs>
@@ -357,6 +383,12 @@
         <div class="kcal-num" id="kcal">6.242</div>
         <div class="kcal-lbl">kcal Bedarf</div>
       </div>
+    </div>
+
+    <div class="kcal-breakdown" id="homeBreakdown">
+      <span>Aktivität <b id="bdAktiv">–</b></span>
+      <span>Basis <b id="bdBasal">–</b></span>
+      <span>Nachbrennen (EPOC) <b id="bdEpoc">–</b></span>
     </div>
 
     <div class="tap-hint" id="tapHint"><span>Antippen für Details</span><span class="chev">▾</span></div>
@@ -444,11 +476,26 @@
         </div>
       </div>
 
+      <div class="field-group">
+        <div class="field-group-title">Herzfrequenz (für Nachbrenn-Effekt)</div>
+        <div class="hr-field-row" style="margin-bottom:0;">
+          <div class="hr-field"><div class="hr-label">Ruhepuls</div><input class="hr-input" type="number" inputmode="numeric" id="inHrRest" placeholder="60"></div>
+          <div class="hr-field"><div class="hr-label">Maxpuls <span class="opt">(opt.)</span></div><input class="hr-input" type="number" inputmode="numeric" id="inHrMax" placeholder="aus Alter"></div>
+          <div class="hr-field"><div class="hr-label">Ø-Puls Einheit</div><input class="hr-input" type="number" inputmode="numeric" id="inHrAvg" placeholder="130"></div>
+        </div>
+      </div>
+
       <div class="field-group-title" style="margin-top:4px;">Übersicht</div>
 
       <div class="calc-hero">
         <div class="n" id="calcKcal">–</div>
         <div class="l">kcal Bedarf</div>
+      </div>
+
+      <div class="kcal-breakdown" id="datenBreakdown">
+        <span>Aktivität <b id="calcBdAktiv">–</b></span>
+        <span>Basis <b id="calcBdBasal">–</b></span>
+        <span>Nachbrennen (EPOC) <b id="calcBdEpoc">–</b></span>
       </div>
 
       <div class="macros" style="margin-bottom:16px;">
@@ -755,7 +802,7 @@ function lookupFoodMacros(text){
 const days = [
   {
     route: 'Edelweißspitze <span class="arrow">→</span> Maria Luggau',
-    km: '106 km', hm: '1.880 Hm', zeit: '~11,3 h', zeitH: 11.3, waterTotal:'3,4 L', waterInt:'150 ml alle 30 Min', mgTotal:420, mgMorn:100, mgEve:320, feTotal:16,
+    km: '106 km', hm: '1.880 Hm', zeit: '~11,3 h', aktivKcal:5288, basalKcal:954, zeitH: 11.3, waterTotal:'3,4 L', waterInt:'150 ml alle 30 Min', mgTotal:420, mgMorn:100, mgEve:320, feTotal:16,
     kcal: '6.242', kh: '811 g', ew: '148 g', ft: '267 g',
     wRider: '117 W', wMotor: '145 W', wSystem: '262 W',
     fillD: 'M0,166 L20,160 L45,163 L70,143 L95,150 L120,114 L150,133 L175,95 L205,119 L230,86 L255,105 L285,71 L310,90 L335,57 L360,76 L400,67 L400,190 L0,190 Z',
@@ -768,7 +815,7 @@ const days = [
   },
   {
     route: 'Maria Luggau <span class="arrow">→</span> Auronzo di Cadore',
-    km: '60 km', hm: '1.630 Hm', zeit: '~8,3 h', zeitH: 8.3, waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '60 km', hm: '1.630 Hm', zeit: '~8,3 h', aktivKcal:4150, basalKcal:1180, zeitH: 8.3, waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.330', kh: '693 g', ew: '145 g', ft: '220 g',
     wRider: '125 W', wMotor: '167 W', wSystem: '292 W',
     fillD: 'M0,171 L30,166 L60,169 L90,124 L120,138 L150,76 L180,105 L210,57 L240,90 L270,124 L300,105 L330,143 L360,114 L400,133 L400,190 L0,190 Z',
@@ -781,7 +828,7 @@ const days = [
   },
   {
     route: 'Auronzo <span class="arrow">→</span> Rifugio Col Gallina',
-    km: '44 km', hm: '1.870 Hm', zeit: '~7,5 h', zeitH: 7.5, waterTotal:'2,7 L', waterInt:'180 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '44 km', hm: '1.870 Hm', zeit: '~7,5 h', aktivKcal:4200, basalKcal:1240, zeitH: 7.5, waterTotal:'2,7 L', waterInt:'180 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.440', kh: '707 g', ew: '150 g', ft: '224 g',
     wRider: '140 W', wMotor: '210 W', wSystem: '350 W',
     fillD: 'M0,181 L40,173 L80,176 L120,143 L160,152 L200,86 L230,105 L260,48 L290,71 L320,29 L350,52 L400,19 L400,190 L0,190 Z',
@@ -794,7 +841,7 @@ const days = [
   },
   {
     route: 'Rifugio Col Gallina <span class="arrow">→</span> Karerpass',
-    km: '63 km', hm: '1.500 Hm', zeit: '~8,4 h', zeitH: 8.4, waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '63 km', hm: '1.500 Hm', zeit: '~8,4 h', aktivKcal:4099, basalKcal:1172, zeitH: 8.4, waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.271', kh: '685 g', ew: '146 g', ft: '216 g',
     wRider: '122 W', wMotor: '159 W', wSystem: '281 W',
     fillD: 'M0,133 L30,114 L60,143 L90,95 L120,124 L150,76 L180,143 L210,105 L240,152 L270,114 L300,138 L330,86 L360,110 L400,76 L400,190 L0,190 Z',
@@ -807,7 +854,7 @@ const days = [
   },
   {
     route: 'Karerpass <span class="arrow">→</span> Mezzolombardo',
-    km: '65 km', hm: '1.100 Hm', zeit: '~6,5 h', zeitH: 6.5, waterTotal:'2,0 L', waterInt:'150 ml alle 30 Min', mgTotal:400, mgMorn:100, mgEve:300, feTotal:15,
+    km: '65 km', hm: '1.100 Hm', zeit: '~6,5 h', aktivKcal:3016, basalKcal:1315, zeitH: 6.5, waterTotal:'2,0 L', waterInt:'150 ml alle 30 Min', mgTotal:400, mgMorn:100, mgEve:300, feTotal:15,
     kcal: '4.331', kh: '563 g', ew: '140 g', ft: '169 g',
     wRider: '116 W', wMotor: '142 W', wSystem: '258 W',
     fillD: 'M0,143 L40,133 L80,148 L120,129 L160,138 L190,86 L220,114 L260,152 L300,166 L340,176 L400,181 L400,190 L0,190 Z',
@@ -820,7 +867,7 @@ const days = [
   },
   {
     route: 'Mezzolombardo <span class="arrow">→</span> Torbole',
-    km: '76 km', hm: '1.350 Hm', zeit: '~8,4 h', zeitH: 8.4, waterTotal:'2,6 L', waterInt:'150 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '76 km', hm: '1.350 Hm', zeit: '~8,4 h', aktivKcal:3931, basalKcal:1172, zeitH: 8.4, waterTotal:'2,6 L', waterInt:'150 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.103', kh: '663 g', ew: '144 g', ft: '208 g',
     wRider: '117 W', wMotor: '145 W', wSystem: '262 W',
     fillD: 'M0,176 L30,114 L60,86 L90,57 L120,81 L150,124 L180,105 L210,143 L240,119 L270,148 L300,129 L330,152 L360,138 L400,157 L400,190 L0,190 Z',
@@ -866,7 +913,6 @@ function render(){
   document.getElementById('km').textContent = d.km;
   document.getElementById('hm').textContent = d.hm;
   document.getElementById('zeit').textContent = d.zeit;
-  document.getElementById('kcal').textContent = d.kcal;
   document.getElementById('kh').textContent = d.kh;
   document.getElementById('ew').textContent = d.ew;
   document.getElementById('ft').textContent = d.ft;
@@ -875,6 +921,9 @@ function render(){
   document.getElementById('wSystem').textContent = d.wSystem;
   document.getElementById('profileFill').setAttribute('d', d.fillD);
   document.getElementById('profileLine').setAttribute('d', d.lineD);
+
+  loadHomeHR(current);
+  renderHomeKcal();
 
   [...pager.children].forEach((el, i) => el.classList.toggle('active', i === current));
   document.getElementById('prevBtn').classList.toggle('disabled', current === 0);
@@ -889,6 +938,53 @@ function render(){
   document.getElementById('feTotal').textContent = d.feTotal + ' mg über Nahrung';
   renderModel();
 }
+
+function loadHomeHR(dayIdx){
+  const ids = ['homeHrRest','homeHrMax','homeHrAvg'];
+  try{
+    const raw = localStorage.getItem('home-hr-day' + dayIdx);
+    const data = raw ? JSON.parse(raw) : {};
+    document.getElementById('homeHrRest').value = data.rest || '';
+    document.getElementById('homeHrMax').value = data.max || '';
+    document.getElementById('homeHrAvg').value = data.avg || '';
+  } catch(e){
+    ids.forEach(id => document.getElementById(id).value = '');
+  }
+}
+
+function saveHomeHR(dayIdx){
+  try{
+    const data = {
+      rest: document.getElementById('homeHrRest').value,
+      max: document.getElementById('homeHrMax').value,
+      avg: document.getElementById('homeHrAvg').value
+    };
+    localStorage.setItem('home-hr-day' + dayIdx, JSON.stringify(data));
+  } catch(e){}
+}
+
+function renderHomeKcal(){
+  const d = days[current];
+  const restHR = parseFloat(document.getElementById('homeHrRest').value) || 0;
+  const maxHR = parseFloat(document.getElementById('homeHrMax').value) || 0;
+  const avgHR = parseFloat(document.getElementById('homeHrAvg').value) || 0;
+
+  const epocPct = computeEpocPct(restHR, maxHR, avgHR, 179); // Fallback-Maxpuls für Alter ~42
+  const epocKcal = d.aktivKcal * epocPct;
+  const totalKcal = d.aktivKcal + d.basalKcal + epocKcal;
+
+  document.getElementById('kcal').textContent = Math.round(totalKcal).toLocaleString('de-DE');
+  document.getElementById('bdAktiv').textContent = fmtKcal(d.aktivKcal);
+  document.getElementById('bdBasal').textContent = fmtKcal(d.basalKcal);
+  document.getElementById('bdEpoc').textContent = fmtKcal(epocKcal);
+}
+
+['homeHrRest','homeHrMax','homeHrAvg'].forEach(id => {
+  document.getElementById(id).addEventListener('input', () => {
+    saveHomeHR(current);
+    renderHomeKcal();
+  });
+});
 
 function renderModel(){
   const d = days[current];
@@ -1350,7 +1446,7 @@ function switchTab(tab){
 }
 
 /* ================= Tab "Daten": eigener Rechner ================= */
-const customFieldIds = ['inKm','inHm','inHeight','inWeight','inAge','inVo2max','inPace5k','inBmrOverride'];
+const customFieldIds = ['inKm','inHm','inHeight','inWeight','inAge','inVo2max','inPace5k','inBmrOverride','inHrRest','inHrMax','inHrAvg'];
 let customActivity = 'lauf';
 let customGender = 'm';
 
@@ -1417,6 +1513,41 @@ function calcBMR(weight, height, age, gender){
   return gender === 'w' ? base - 161 : base + 5;
 }
 
+/* ================= Nachbrenn-Effekt (EPOC) über Herzfrequenzreserve ================= */
+// Stufenlose Interpolation statt grober Sprünge, damit jede Puls-Änderung sichtbar wirkt
+function classifyEpocPct(hrr){
+  const points = [
+    [0.00, 0.03],
+    [0.30, 0.04],
+    [0.60, 0.055],
+    [0.75, 0.08],
+    [0.85, 0.11],
+    [1.00, 0.14]
+  ];
+  if(hrr <= points[0][0]) return points[0][1];
+  for(let i = 1; i < points.length; i++){
+    if(hrr <= points[i][0]){
+      const [x0, y0] = points[i-1];
+      const [x1, y1] = points[i];
+      const t = (hrr - x0) / (x1 - x0);
+      return y0 + t * (y1 - y0);
+    }
+  }
+  return points[points.length - 1][1];
+}
+
+function computeEpocPct(restHR, maxHR, avgHR, fallbackMaxHR){
+  if(!avgHR) return 0.05; // ganz ohne Pulsdaten: vorsichtige Standard-Annahme
+  const rest = restHR || 60; // sinnvoller Standard-Ruhepuls, falls nicht eingetragen
+  const max = maxHR || fallbackMaxHR;
+  if(!max || max <= rest) return 0.05;
+  const hrr = (avgHR - rest) / (max - rest);
+  if(hrr <= 0) return 0.03;
+  return classifyEpocPct(Math.min(hrr, 1.05));
+}
+
+function fmtKcal(n){ return Math.round(n).toLocaleString('de-DE') + ' kcal'; }
+
 const activityProfiles = {
   lauf: { flatSpeed: 10, climbRate: 300, flatCostPerKgKm: 1.0 },
   rad:  { flatSpeed: 25, climbRate: 500, flatCostPerKgKm: 0.35 }
@@ -1431,6 +1562,9 @@ function runCustomCalc(){
   const vo2max = parseFloat(document.getElementById('inVo2max').value) || 0;
   const pace5k = parseFloat(document.getElementById('inPace5k').value) || 0;
   const bmrOverride = parseFloat(document.getElementById('inBmrOverride').value) || 0;
+  const hrRest = parseFloat(document.getElementById('inHrRest').value) || 0;
+  const hrMax = parseFloat(document.getElementById('inHrMax').value) || 0;
+  const hrAvg = parseFloat(document.getElementById('inHrAvg').value) || 0;
 
   if(!km || !weight || !height || !age){
     document.getElementById('calcKcal').textContent = '–';
@@ -1440,6 +1574,9 @@ function runCustomCalc(){
     document.getElementById('calcStat1').textContent = '–';
     document.getElementById('calcStat2').textContent = '–';
     document.getElementById('calcStat3').textContent = '–';
+    document.getElementById('calcBdAktiv').textContent = '–';
+    document.getElementById('calcBdBasal').textContent = '–';
+    document.getElementById('calcBdEpoc').textContent = '–';
     return;
   }
 
@@ -1455,7 +1592,12 @@ function runCustomCalc(){
   const activityKcal = flatKcal + climbMetabolicKcal;
 
   const restKcal = bmr * (24 - timeH) / 24;
-  const totalKcal = activityKcal + restKcal;
+
+  const fallbackMaxHR = 208 - 0.7 * age;
+  const epocPct = computeEpocPct(hrRest, hrMax, hrAvg, fallbackMaxHR);
+  const epocKcal = activityKcal * epocPct;
+
+  const totalKcal = activityKcal + restKcal + epocKcal;
 
   const proteinG = weight * 1.8;
   const khG = totalKcal * 0.52 / 4;
@@ -1465,6 +1607,9 @@ function runCustomCalc(){
   document.getElementById('calcKh').textContent = Math.round(khG) + ' g';
   document.getElementById('calcEw').textContent = Math.round(proteinG) + ' g';
   document.getElementById('calcFt').textContent = Math.round(Math.max(fettG,0)) + ' g';
+  document.getElementById('calcBdAktiv').textContent = fmtKcal(activityKcal);
+  document.getElementById('calcBdBasal').textContent = fmtKcal(restKcal);
+  document.getElementById('calcBdEpoc').textContent = fmtKcal(epocKcal);
 
   document.getElementById('calcStat2').textContent = timeH.toFixed(1).replace('.', ',') + ' h';
   document.getElementById('calcStat3').textContent = Math.round(efficiency*100) + ' %';
