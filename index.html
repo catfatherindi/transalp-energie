@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" data-app-version="2026.08.12-15">
+<html lang="de" data-app-version="2026.08.16-21">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -8,6 +8,9 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Transalp">
 <meta name="theme-color" content="#121A24">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23121A24'/%3E%3Cpath d='M0,72 L18,60 L30,66 L46,40 L58,52 L74,24 L100,38 L100,100 L0,100 Z' fill='%23F0A23C' opacity='0.85'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -164,30 +167,6 @@
   .terrain-toggle .chev{ color: var(--accent-fuel); font-size: 11px; transition: transform 0.2s; }
   .terrain-toggle.open .chev{ transform: rotate(180deg); }
   .terrain-panel{ margin-bottom: 16px; }
-
-  .timing-input-row{ display: flex; align-items: flex-end; gap: 10px; margin-bottom: 16px; }
-  .timing-km-field{ flex: 1; }
-  .timing-start-btn{
-    padding: 11px 16px; border-radius: 10px; border: 1px solid var(--accent-effort);
-    background: rgba(95,191,174,0.1); color: var(--accent-effort);
-    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.05em;
-    text-transform: uppercase; cursor: pointer; white-space: nowrap;
-  }
-  .timing-start-btn.active{ border-color: var(--line); background: var(--bg-surface); color: var(--text-muted); }
-
-  .timing-badge{
-    position: absolute; top: 12px; left: 12px; right: 12px;
-    display: flex; align-items: center; gap: 6px;
-    background: rgba(18,26,36,0.85); border: 1px solid var(--accent-fuel);
-    border-radius: 10px; padding: 7px 10px;
-    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-primary);
-    backdrop-filter: blur(4px);
-  }
-  .timing-badge .dot{ width: 6px; height: 6px; border-radius: 50%; background: var(--accent-fuel); flex-shrink: 0; }
-  .timing-badge.nuts .dot{ background: var(--accent-effort); }
-  .timing-badge.nuts{ border-color: var(--accent-effort); }
-  .timing-badge.due{ animation: timingPulse 1.4s ease-in-out infinite; }
-  @keyframes timingPulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.6; } }
 
   .calc-hero{
     position: relative; border-radius: 18px;
@@ -407,6 +386,67 @@
     color: var(--text-muted); border: 1px solid var(--line); border-radius: 5px;
     padding: 1px 6px; letter-spacing: 0.05em; margin-left: 6px; vertical-align: middle;
   }
+
+  /* ---- Aktivitäts-Tracking (Home) ---- */
+  .activity-tracker{ margin-bottom: 18px; }
+  .activity-status-row{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .activity-status-label{
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .activity-status-value{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent-effort); }
+  .activity-buttons{ display: flex; gap: 8px; }
+  .activity-btn{
+    flex: 1; text-align: center; padding: 10px 4px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--bg-surface);
+    font-family: 'Inter', sans-serif; font-size: 12.5px; color: var(--text-primary); cursor: pointer;
+    -webkit-user-select: none; user-select: none;
+  }
+  .activity-btn:active{ background: var(--bg-surface-2); }
+  .activity-btn.disabled{ opacity: 0.3; pointer-events: none; }
+
+  /* ---- Timing km-Zeile (Home) ---- */
+  .timing-km-row{ margin-bottom: 18px; }
+
+  /* ---- Timing-Badge im Hero ---- */
+  .timing-badge{
+    position: absolute; top: 12px; left: 12px; right: 12px;
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(18,26,36,0.85); border: 1px solid var(--accent-fuel);
+    border-radius: 10px; padding: 7px 10px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-primary);
+    backdrop-filter: blur(4px);
+  }
+  .timing-badge .dot{ width: 6px; height: 6px; border-radius: 50%; background: var(--accent-fuel); flex-shrink: 0; }
+  .timing-badge.nuts .dot{ background: var(--accent-effort); }
+  .timing-badge.nuts{ border-color: var(--accent-effort); }
+  .timing-badge.due{ animation: timingPulse 1.4s ease-in-out infinite; }
+  @keyframes timingPulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.6; } }
+
+  /* ---- Schnellerfassung (Home) ---- */
+  .quick-food-section{ margin-bottom: 18px; }
+  .quick-food-title{
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-primary); margin-bottom: 10px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .quick-food-row{ display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .quick-food-row:last-of-type{ border-bottom: none; }
+  .qf-label{ font-size: 13.5px; color: var(--text-primary); }
+  .qf-label .opt{ color: var(--text-muted); font-size: 11px; }
+  .qty-control{ display: flex; align-items: center; gap: 10px; }
+  .qty-btn{
+    width: 28px; height: 28px; border-radius: 50%; background: var(--bg-surface);
+    border: 1px solid var(--line); color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px;
+    -webkit-user-select: none; user-select: none;
+  }
+  .qty-btn:active{ background: var(--bg-surface-2); }
+  .qty-count{ font-family: 'JetBrains Mono', monospace; font-size: 14px; min-width: 18px; text-align: center; }
+  .water-status{ margin-top: 10px; }
+  .water-status-row{ display: flex; justify-content: space-between; padding: 5px 0; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+  .water-status-row .k{ color: var(--text-muted); }
+  .water-status-row .v{ color: var(--text-primary); font-weight: 500; }
 </style>
 </head>
 <body>
@@ -437,14 +477,6 @@
       <div class="stat"><div class="val" id="km">106 km</div><div class="lbl">Strecke</div></div>
       <div class="stat"><div class="val" id="hm">1.880 Hm</div><div class="lbl">Anstieg</div></div>
       <div class="stat"><div class="val" id="zeit">~11,3 h</div><div class="lbl">Fahrzeit</div></div>
-    </div>
-
-    <div class="timing-input-row">
-      <div class="timing-km-field">
-        <div class="hr-label">Aktuelle Position (km)</div>
-        <input class="hr-input" type="number" inputmode="decimal" id="currentKmInput" placeholder="0">
-      </div>
-      <div class="timing-start-btn" id="stageStartBtn">Etappe starten</div>
     </div>
 
     <div class="hr-field-row">
@@ -510,6 +542,80 @@
       <span>Aktivität <b id="bdAktiv">–</b></span>
       <span>Basis <b id="bdBasal">–</b></span>
       <span>Nachbrennen (EPOC) <b id="bdEpoc">–</b></span>
+    </div>
+
+    <div class="activity-tracker" id="activityTracker">
+      <div class="activity-status-row">
+        <div class="activity-status-label">Zeiterfassung</div>
+        <div class="activity-status-value" id="activityStatusText">Nicht gestartet</div>
+      </div>
+      <div class="activity-buttons">
+        <div class="activity-btn" id="btnStart">Start</div>
+        <div class="activity-btn" id="btnPause">Pause</div>
+        <div class="activity-btn" id="btnResume">Weiter</div>
+        <div class="activity-btn" id="btnEnd">Ende</div>
+      </div>
+    </div>
+
+    <div class="timing-km-row" id="timingKmRow">
+      <div class="hr-label">Aktuelle Position (km)</div>
+      <input class="hr-input" type="number" inputmode="decimal" id="currentKmInput" placeholder="0" style="text-align:left;">
+    </div>
+
+    <div class="quick-food-section" id="quickFoodSection">
+      <div class="quick-food-title">Schnellerfassung</div>
+
+      <div class="quick-food-row" data-preset="muesli">
+        <div class="qf-label">Müsli</div>
+        <div class="qty-control">
+          <div class="qty-btn qty-minus">–</div>
+          <div class="qty-count" id="qtyMuesli">0</div>
+          <div class="qty-btn qty-plus">+</div>
+        </div>
+      </div>
+
+      <div class="quick-food-row" data-preset="erdnuesse">
+        <div class="qf-label">Erdnüsse <span class="opt">(20 g)</span></div>
+        <div class="qty-control">
+          <div class="qty-btn qty-minus">–</div>
+          <div class="qty-count" id="qtyErdnuesse">0</div>
+          <div class="qty-btn qty-plus">+</div>
+        </div>
+      </div>
+
+      <div class="quick-food-row" data-preset="clifbar">
+        <div class="qf-label">Clif Bar Riegel</div>
+        <div class="qty-control">
+          <div class="qty-btn qty-minus">–</div>
+          <div class="qty-count" id="qtyClifbar">0</div>
+          <div class="qty-btn qty-plus">+</div>
+        </div>
+      </div>
+
+      <div class="quick-food-row" data-preset="powergel">
+        <div class="qf-label">Powergel</div>
+        <div class="qty-control">
+          <div class="qty-btn qty-minus">–</div>
+          <div class="qty-count" id="qtyPowergel">0</div>
+          <div class="qty-btn qty-plus">+</div>
+        </div>
+      </div>
+
+      <div class="quick-food-row" data-preset="wasser">
+        <div class="qf-label">Wasser <span class="opt">(100 ml)</span></div>
+        <div class="qty-control">
+          <div class="qty-btn qty-minus">–</div>
+          <div class="qty-count" id="qtyWasser">0</div>
+          <div class="qty-btn qty-plus">+</div>
+        </div>
+      </div>
+
+      <div class="water-status">
+        <div class="water-status-row"><span class="k">Grundbedarf bis jetzt</span><span class="v" id="waterSollBase">– ml</span></div>
+        <div class="water-status-row"><span class="k">Tour-Zusatz bis jetzt</span><span class="v" id="waterSollTour">– ml</span></div>
+        <div class="water-status-row"><span class="k">Soll gesamt</span><span class="v" id="waterSoll">– ml</span></div>
+        <div class="water-status-row"><span class="k">Bereits getrunken</span><span class="v" id="waterIst">0 ml</span></div>
+      </div>
     </div>
 
     <div class="tap-hint" id="tapHint"><span>Antippen für Details</span><span class="chev">▾</span></div>
@@ -937,19 +1043,15 @@ function normalizeFoodText(s){
 }
 
 function normalizeKeyText(s){
-  // gleiche Normalisierung wie DB-Schlüssel (ohne ae/oe/ue-Umwandlung erneut, Schlüssel sind bereits so definiert)
   return s.toLowerCase().replace(/ä/g,'ae').replace(/ö/g,'oe').replace(/ü/g,'ue').replace(/ß/g,'ss').replace(/[^a-z]/g,'');
 }
 
-// Baut ein durchsuchbares Wörterbuch aus DB-Schlüsseln + Synonymen (alles normalisiert, ohne Leerzeichen)
 const lookupIndex = {};
 Object.keys(foodDB).forEach(k => { lookupIndex[normalizeKeyText(k)] = k; });
 Object.keys(foodSynonyms).forEach(k => { lookupIndex[normalizeKeyText(k)] = foodSynonyms[k]; });
 
 function findFoodMatch(text){
   const norm = normalizeFoodText(text);
-  const wordsJoined = norm.replace(/[0-9., ]*(gramm|gram|g|ml|milliliter|stueck|stk)?\b/g,' ').replace(/\s+/g,'');
-  // Versuch 1: komplette Wortkette gegen Index (ohne Zahlen/Einheiten)
   const stripped = norm.replace(/[0-9]+([.,][0-9]+)?/g,'').replace(/\b(gramm|gram|g|ml|milliliter|stueck|stk|von|ein|eine|einen)\b/g,' ').trim();
   const compact = stripped.replace(/\s+/g,'');
   for(const key in lookupIndex){
@@ -957,7 +1059,6 @@ function findFoodMatch(text){
       return lookupIndex[key];
     }
   }
-  // Versuch 2: einzelne Wörter prüfen
   const wordList = stripped.split(/\s+/).filter(Boolean);
   for(const w of wordList){
     const nw = normalizeKeyText(w);
@@ -972,7 +1073,7 @@ function parseQuantity(text){
   if(match && match[1]){
     return parseFloat(match[1].replace(',', '.'));
   }
-  return 100; // kein Mengenangabe gefunden -> 100 g als Basis annehmen
+  return 100;
 }
 
 function lookupFoodMacros(text){
@@ -980,7 +1081,7 @@ function lookupFoodMacros(text){
   if(!key) return null;
   const qty = parseQuantity(text);
   const base = foodDB[key];
-  const factor = qty / 100; // Dreisatz
+  const factor = qty / 100;
   return {
     kcal: Math.round(base.kcal * factor),
     kh: Math.round(base.kh * factor * 10) / 10,
@@ -991,10 +1092,30 @@ function lookupFoodMacros(text){
   };
 }
 
+/* ===== Schnellwahl-Presets (Home) ===== */
+const quickFoodPresets = {
+  muesli:    { label: 'Müsli', kcal: 592, kh: 53, ew: 33, ft: 27 },
+  erdnuesse: { label: 'Erdnüsse (20 g)', kcal: 113, kh: 3, ew: 5, ft: 10 },
+  clifbar:   { label: 'Clif Bar Riegel', kcal: 267, kh: 36, ew: 10, ft: 8 },
+  powergel:  { label: 'Powergel', kcal: 103, kh: 26, ew: 0, ft: 0 }
+};
+
+const terrainTypes = [
+  { id: 'strasse',  label: 'Straße',  factor: 1.0 },
+  { id: 'waldweg',  label: 'Waldweg', factor: 1.15 },
+  { id: 'schotter', label: 'Schotter', factor: 1.3 },
+  { id: 'geroell',  label: 'Geröll',  factor: 1.6 },
+  { id: 'sand',     label: 'Sand',    factor: 2.2 }
+];
+
 const days = [
   {
     route: 'Edelweißspitze <span class="arrow">→</span> Maria Luggau',
-    km: '106 km', hm: '1.880 Hm', zeit: '~11,3 h', aktivKcal:5288, basalKcal:954, zeitH: 11.3, timingEvents: [{type:'nuts', timeH:2.825}, {type:'gel', timeH:4.933, km:46.1}, {type:'nuts', timeH:5.65}, {type:'nuts', timeH:8.475}, {type:'gel', timeH:8.668, km:81.0}], waterTotal:'3,4 L', waterInt:'150 ml alle 30 Min', mgTotal:420, mgMorn:100, mgEve:320, feTotal:16,
+    km: '106 km', hm: '1.880 Hm', zeit: '~11,3 h', aktivKcal:5288, basalKcal:954, zeitH: 11.3,
+    terrainDefaults: {strasse:73.3, waldweg:22.6, schotter:5.98, geroell:0, sand:0},
+    timingEvents: [{type:'nuts', timeH:2.825}, {type:'gel', timeH:4.434, km:46.1}, {type:'nuts', timeH:5.65}, {type:'gel', timeH:8.44, km:81.0}, {type:'nuts', timeH:8.475}],
+    paceCheckpoints: [[0.0,0.0],[1.03,0.0872],[2.34,0.2188],[3.77,0.3213],[5.78,0.5886],[7.39,0.8329],[8.92,0.9879],[9.97,1.0631],[11.57,1.1766],[12.98,1.2829],[14.75,1.4157],[16.24,1.562],[17.13,1.6426],[18.27,1.7336],[20.16,1.8779],[21.88,2.014],[23.32,2.1429],[24.71,2.2598],[27.06,2.5036],[29.6,2.7604],[32.39,3.0115],[34.26,3.1937],[36.53,3.4353],[39.15,3.7004],[40.84,3.8698],[43.44,4.1349],[45.61,4.362],[47.14,4.5874],[48.67,4.8156],[50.32,5.038],[52.07,5.1964],[53.83,5.3407],[55.45,5.4574],[56.36,5.533],[57.84,5.7078],[59.83,5.9013],[63.51,6.2927],[65.85,6.5474],[67.82,6.7594],[70.65,7.0664],[72.4,7.2678],[73.65,7.4277],[75.25,7.6551],[76.76,7.8663],[78.16,8.0696],[80.05,8.2912],[82.51,8.6766],[84.42,8.8462],[86.53,9.0672],[87.96,9.197],[89.27,9.3491],[90.68,9.4984],[92.38,9.7089],[93.65,9.8689],[95.07,10.0241],[96.3,10.1667],[97.45,10.2819],[99.07,10.5032],[101.09,10.7573],[102.92,10.976],[104.45,11.141],[105.59,11.3]],
+    waterTotal:'3,4 L', waterInt:'150 ml alle 30 Min', mgTotal:420, mgMorn:100, mgEve:320, feTotal:16,
     kcal: '6.242', kh: '811 g', ew: '148 g', ft: '267 g',
     wRider: '117 W', wMotor: '145 W', wSystem: '262 W',
     fillD: 'M0,166 L20,160 L45,163 L70,143 L95,150 L120,114 L150,133 L175,95 L205,119 L230,86 L255,105 L285,71 L310,90 L335,57 L360,76 L400,67 L400,190 L0,190 Z',
@@ -1007,7 +1128,11 @@ const days = [
   },
   {
     route: 'Maria Luggau <span class="arrow">→</span> Auronzo di Cadore',
-    km: '60 km', hm: '1.630 Hm', zeit: '~8,3 h', aktivKcal:4150, basalKcal:1180, zeitH: 8.3, timingEvents: [{type:'nuts', timeH:2.075}, {type:'gel', timeH:2.623, km:18.8}, {type:'nuts', timeH:4.15}, {type:'gel', timeH:5.845, km:41.9}, {type:'nuts', timeH:6.225}], waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '60 km', hm: '1.630 Hm', zeit: '~8,3 h', aktivKcal:4150, basalKcal:1180, zeitH: 8.3,
+    terrainDefaults: {strasse:15.77, waldweg:32.2, schotter:10.4, geroell:1.01, sand:0},
+    timingEvents: [{type:'nuts', timeH:2.075}, {type:'gel', timeH:3.098, km:18.8}, {type:'nuts', timeH:4.15}, {type:'gel', timeH:5.752, km:41.9}, {type:'nuts', timeH:6.225}],
+    paceCheckpoints: [[0.0,0.0],[0.58,0.0887],[1.53,0.2129],[2.25,0.3038],[3.71,0.5195],[4.85,0.7066],[6.03,0.876],[7.3,1.0751],[8.8,1.3127],[10.14,1.5272],[11.22,1.7028],[12.1,1.8502],[13.21,2.0516],[14.14,2.2282],[14.93,2.3741],[15.8,2.538],[16.41,2.6452],[17.19,2.7908],[18.24,2.9918],[18.92,3.1208],[19.5,3.2337],[20.12,3.3487],[20.51,3.4005],[20.99,3.452],[21.55,3.5151],[22.1,3.5684],[22.56,3.6167],[23.15,3.6798],[23.85,3.7556],[24.32,3.8013],[24.72,3.8428],[25.65,3.9324],[26.3,3.9983],[27.35,4.1002],[29.65,4.3135],[31.69,4.5528],[32.56,4.6475],[33.49,4.7593],[34.54,4.8904],[36.51,5.1039],[37.82,5.2537],[38.98,5.3895],[40.08,5.5291],[41.22,5.6565],[42.06,5.7749],[43.5,6.0373],[44.76,6.2615],[45.56,6.414],[46.62,6.6055],[47.49,6.7621],[49.0,6.9891],[50.2,7.1621],[51.95,7.3373],[53.18,7.4541],[53.95,7.5368],[54.63,7.6221],[55.44,7.7159],[56.26,7.8161],[56.89,7.8952],[57.67,8.0005],[59.16,8.2307],[59.52,8.3]],
+    waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.330', kh: '693 g', ew: '145 g', ft: '220 g',
     wRider: '125 W', wMotor: '167 W', wSystem: '292 W',
     fillD: 'M0,171 L30,166 L60,169 L90,124 L120,138 L150,76 L180,105 L210,57 L240,90 L270,124 L300,105 L330,143 L360,114 L400,133 L400,190 L0,190 Z',
@@ -1020,7 +1145,11 @@ const days = [
   },
   {
     route: 'Auronzo <span class="arrow">→</span> Rifugio Col Gallina',
-    km: '44 km', hm: '1.870 Hm', zeit: '~7,5 h', aktivKcal:4200, basalKcal:1240, zeitH: 7.5, timingEvents: [{type:'nuts', timeH:1.875}, {type:'gel', timeH:3.324, km:19.3}, {type:'nuts', timeH:3.75}, {type:'gel', timeH:5.339, km:31.0}, {type:'nuts', timeH:5.625}], waterTotal:'2,7 L', waterInt:'180 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '44 km', hm: '1.870 Hm', zeit: '~7,5 h', aktivKcal:4200, basalKcal:1240, zeitH: 7.5,
+    terrainDefaults: {strasse:12.1, waldweg:26.9, schotter:3.53, geroell:1.02, sand:0},
+    timingEvents: [{type:'nuts', timeH:1.875}, {type:'gel', timeH:3.437, km:19.3}, {type:'nuts', timeH:3.75}, {type:'gel', timeH:5.058, km:31.0}, {type:'nuts', timeH:5.625}],
+    paceCheckpoints: [[0.0,0.0],[0.74,0.1214],[1.13,0.1753],[1.87,0.3013],[2.85,0.4625],[3.43,0.5625],[3.88,0.6325],[4.57,0.751],[5.39,0.8734],[6.65,1.0735],[7.52,1.2182],[8.5,1.3966],[8.86,1.4501],[9.36,1.5383],[10.08,1.6557],[10.8,1.7877],[11.47,1.9202],[12.04,2.0105],[12.82,2.137],[13.56,2.2784],[14.23,2.4103],[15.08,2.5792],[16.24,2.8159],[16.97,2.9512],[17.66,3.0932],[19.08,3.3981],[19.68,3.5052],[20.7,3.7243],[21.84,3.9457],[22.78,4.0387],[23.61,4.123],[24.12,4.1908],[24.61,4.2684],[25.04,4.3352],[25.36,4.3775],[25.63,4.4155],[26.2,4.4816],[26.45,4.5061],[27.1,4.5689],[27.57,4.6154],[28.0,4.6564],[28.88,4.7525],[29.4,4.8162],[29.79,4.8547],[30.38,4.9314],[31.02,5.0624],[31.58,5.182],[32.11,5.2932],[32.86,5.4456],[33.5,5.5671],[34.14,5.6721],[34.68,5.7397],[35.45,5.8797],[36.21,6.0372],[37.07,6.2114],[37.87,6.3486],[39.7,6.709],[40.82,6.9495],[41.26,7.0284],[41.99,7.1844],[42.52,7.2921],[43.07,7.4038],[43.55,7.5]],
+    waterTotal:'2,7 L', waterInt:'180 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.440', kh: '707 g', ew: '150 g', ft: '224 g',
     wRider: '140 W', wMotor: '210 W', wSystem: '350 W',
     fillD: 'M0,181 L40,173 L80,176 L120,143 L160,152 L200,86 L230,105 L260,48 L290,71 L320,29 L350,52 L400,19 L400,190 L0,190 Z',
@@ -1033,7 +1162,11 @@ const days = [
   },
   {
     route: 'Rifugio Col Gallina <span class="arrow">→</span> Karerpass',
-    km: '63 km', hm: '1.500 Hm', zeit: '~8,4 h', aktivKcal:4099, basalKcal:1172, zeitH: 8.4, timingEvents: [{type:'nuts', timeH:2.1}, {type:'gel', timeH:2.868, km:23.3}, {type:'nuts', timeH:4.2}, {type:'nuts', timeH:6.3}, {type:'gel', timeH:7.841, km:58.8}], waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '63 km', hm: '1.500 Hm', zeit: '~8,4 h', aktivKcal:4099, basalKcal:1172, zeitH: 8.4,
+    terrainDefaults: {strasse:14.24, waldweg:40.3, schotter:3.88, geroell:2.35, sand:0},
+    timingEvents: [{type:'nuts', timeH:2.1}, {type:'gel', timeH:3.037, km:23.3}, {type:'nuts', timeH:4.2}, {type:'nuts', timeH:6.3}, {type:'gel', timeH:7.708, km:58.8}],
+    paceCheckpoints: [[0.0,0.0],[1.05,0.1777],[2.28,0.3866],[3.37,0.5043],[4.24,0.5788],[5.34,0.6729],[5.89,0.7234],[6.36,0.7637],[6.88,0.8122],[7.57,0.8779],[8.14,0.9326],[9.19,1.1171],[10.1,1.2786],[10.87,1.4184],[11.4,1.5158],[12.17,1.6448],[13.08,1.8052],[13.7,1.883],[14.5,1.9684],[15.42,2.0533],[16.47,2.21],[17.15,2.2697],[18.08,2.4067],[19.31,2.5592],[19.82,2.6069],[20.76,2.7425],[22.19,2.8624],[23.09,2.969],[26.29,4.0123],[27.07,4.104],[28.06,4.2197],[29.03,4.3608],[29.93,4.4768],[30.86,4.5863],[32.09,4.7266],[32.71,4.7815],[33.42,4.8445],[34.05,4.9013],[34.7,4.958],[35.28,5.0102],[36.52,5.1156],[37.15,5.1771],[37.67,5.2282],[38.58,5.3058],[39.27,5.3686],[40.72,5.5355],[42.52,5.7232],[44.4,5.9285],[46.1,6.1229],[47.74,6.2975],[48.7,6.4018],[49.82,6.5298],[51.42,6.6837],[53.14,6.8607],[54.15,6.9962],[55.58,7.1695],[56.86,7.3864],[58.36,7.6342],[59.89,7.8906],[61.79,8.2086],[63.01,8.3722],[63.34,8.4]],
+    waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.271', kh: '685 g', ew: '146 g', ft: '216 g',
     wRider: '122 W', wMotor: '159 W', wSystem: '281 W',
     fillD: 'M0,133 L30,114 L60,143 L90,95 L120,124 L150,76 L180,143 L210,105 L240,152 L270,114 L300,138 L330,86 L360,110 L400,76 L400,190 L0,190 Z',
@@ -1046,7 +1179,11 @@ const days = [
   },
   {
     route: 'Karerpass <span class="arrow">→</span> Mezzolombardo',
-    km: '65 km', hm: '1.100 Hm', zeit: '~6,5 h', aktivKcal:3016, basalKcal:1315, zeitH: 6.5, timingEvents: [{type:'gel', timeH:0.59, km:5.9}, {type:'gel', timeH:1.53, km:15.3}, {type:'nuts', timeH:1.625}, {type:'nuts', timeH:3.25}, {type:'nuts', timeH:4.875}], waterTotal:'2,0 L', waterInt:'150 ml alle 30 Min', mgTotal:400, mgMorn:100, mgEve:300, feTotal:15,
+    km: '65 km', hm: '1.100 Hm', zeit: '~6,5 h', aktivKcal:3016, basalKcal:1315, zeitH: 6.5,
+    terrainDefaults: {strasse:35.56, waldweg:21.5, schotter:7.6, geroell:0.41, sand:0},
+    timingEvents: [{type:'gel', timeH:0.686, km:5.9}, {type:'nuts', timeH:1.625}, {type:'gel', timeH:1.709, km:15.3}, {type:'nuts', timeH:3.25}, {type:'nuts', timeH:4.875}],
+    paceCheckpoints: [[0.0,0.0],[0.64,0.0945],[1.48,0.187],[2.86,0.3399],[4.61,0.5665],[5.97,0.6921],[7.47,0.911],[8.77,1.0119],[10.13,1.128],[11.69,1.3113],[12.42,1.3697],[12.93,1.4037],[13.55,1.4489],[14.25,1.554],[15.01,1.6666],[15.7,1.7663],[16.22,1.8429],[16.92,1.9472],[17.57,2.0155],[19.09,2.2389],[20.04,2.3774],[21.19,2.5365],[21.73,2.5861],[22.3,2.624],[22.89,2.6732],[23.64,2.7401],[24.51,2.799],[25.69,2.8783],[26.22,2.9145],[27.38,2.994],[28.11,3.0439],[28.8,3.0969],[29.54,3.1565],[30.17,3.2219],[31.31,3.3221],[32.33,3.4097],[33.74,3.5351],[34.8,3.6372],[35.95,3.7374],[36.29,3.7734],[36.72,3.8057],[37.34,3.8494],[37.52,3.8616],[38.35,3.9288],[39.26,4.004],[40.36,4.1167],[40.84,4.1489],[41.54,4.2116],[42.08,4.2497],[42.94,4.3087],[43.81,4.3859],[47.61,4.7649],[50.05,5.0071],[52.89,5.2866],[54.71,5.4633],[56.79,5.671],[58.04,5.7972],[60.76,6.0654],[61.67,6.1569],[62.47,6.2428],[62.98,6.2937],[64.15,6.4134],[65.0,6.4986],[65.01,6.5]],
+    waterTotal:'2,0 L', waterInt:'150 ml alle 30 Min', mgTotal:400, mgMorn:100, mgEve:300, feTotal:15,
     kcal: '4.331', kh: '563 g', ew: '140 g', ft: '169 g',
     wRider: '116 W', wMotor: '142 W', wSystem: '258 W',
     fillD: 'M0,143 L40,133 L80,148 L120,129 L160,138 L190,86 L220,114 L260,152 L300,166 L340,176 L400,181 L400,190 L0,190 Z',
@@ -1059,7 +1196,11 @@ const days = [
   },
   {
     route: 'Mezzolombardo <span class="arrow">→</span> Torbole',
-    km: '76 km', hm: '1.350 Hm', zeit: '~8,4 h', aktivKcal:3931, basalKcal:1172, zeitH: 8.4, timingEvents: [{type:'gel', timeH:1.26, km:11.4}, {type:'gel', timeH:1.492, km:13.5}, {type:'nuts', timeH:2.1}, {type:'nuts', timeH:4.2}, {type:'nuts', timeH:6.3}], waterTotal:'2,6 L', waterInt:'150 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '76 km', hm: '1.350 Hm', zeit: '~8,4 h', aktivKcal:3931, basalKcal:1172, zeitH: 8.4,
+    terrainDefaults: {strasse:51.67, waldweg:18.4, schotter:5.03, geroell:1.65, sand:0},
+    timingEvents: [{type:'gel', timeH:1.26, km:11.4}, {type:'gel', timeH:1.492, km:13.5}, {type:'nuts', timeH:2.1}, {type:'nuts', timeH:4.2}, {type:'nuts', timeH:6.3}],
+    paceCheckpoints: [[0.0,0.0],[2.34,0.2506],[3.44,0.3987],[4.29,0.5009],[5.52,0.6749],[6.26,0.7806],[6.91,0.8717],[7.57,0.9711],[8.77,1.146],[9.57,1.2495],[10.86,1.3723],[12.15,1.5554],[13.37,1.7408],[14.54,1.9215],[15.64,2.0857],[17.52,2.3608],[18.74,2.4646],[20.29,2.6234],[21.48,2.7694],[22.57,2.8749],[24.45,3.0586],[25.37,3.1475],[26.11,3.2311],[27.24,3.361],[28.28,3.4863],[29.41,3.6133],[30.6,3.7327],[32.15,3.8796],[33.23,3.9711],[34.17,4.0549],[35.11,4.1248],[35.75,4.192],[36.75,4.3284],[39.37,4.6008],[40.9,4.7969],[41.55,4.8782],[43.52,5.0401],[44.22,5.098],[45.41,5.2433],[47.4,5.4676],[48.65,5.5951],[50.1,5.7296],[51.32,5.8264],[52.85,5.9927],[54.95,6.212],[56.09,6.3404],[57.04,6.4471],[58.18,6.5646],[58.94,6.641],[60.02,6.7463],[60.83,6.8183],[61.61,6.9028],[62.37,6.9784],[63.48,7.0929],[65.05,7.2531],[66.78,7.4203],[68.72,7.6266],[69.58,7.7236],[71.13,7.8885],[73.89,8.1735],[75.08,8.3018],[75.8,8.3798],[76.0,8.4]],
+    waterTotal:'2,6 L', waterInt:'150 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.103', kh: '663 g', ew: '144 g', ft: '208 g',
     wRider: '117 W', wMotor: '145 W', wSystem: '262 W',
     fillD: 'M0,176 L30,114 L60,86 L90,57 L120,81 L150,124 L180,105 L210,143 L240,119 L270,148 L300,129 L330,152 L360,138 L400,157 L400,190 L0,190 Z',
@@ -1070,14 +1211,6 @@ const days = [
       { kcal:'3.819', kh:'504 g', ew:'118 g', ft:'148 g', nuts:'0 g',  nutsInt:'nur abends, nicht auf dem Bike' }
     ]
   }
-];
-
-const terrainTypes = [
-  { id: 'strasse',  label: 'Straße',  factor: 1.0 },
-  { id: 'waldweg',  label: 'Waldweg', factor: 1.15 },
-  { id: 'schotter', label: 'Schotter', factor: 1.3 },
-  { id: 'geroell',  label: 'Geröll',  factor: 1.6 },
-  { id: 'sand',     label: 'Sand',    factor: 2.2 }
 ];
 
 const modelMeta = [
@@ -1113,9 +1246,6 @@ function render(){
   document.getElementById('km').textContent = d.km;
   document.getElementById('hm').textContent = d.hm;
   document.getElementById('zeit').textContent = d.zeit;
-  document.getElementById('kh').textContent = d.kh;
-  document.getElementById('ew').textContent = d.ew;
-  document.getElementById('ft').textContent = d.ft;
   document.getElementById('wRider').textContent = d.wRider;
   document.getElementById('wMotor').textContent = d.wMotor;
   document.getElementById('wSystem').textContent = d.wSystem;
@@ -1124,8 +1254,10 @@ function render(){
 
   loadHomeHR(current);
   loadHomeTerrain(current);
-  renderHomeKcal();
+  loadActivity(current);
+  loadQuickFood(current);
   loadCurrentKm(current);
+  renderHomeKcal();
   renderTimingBadge();
 
   [...pager.children].forEach((el, i) => el.classList.toggle('active', i === current));
@@ -1166,33 +1298,30 @@ function saveHomeHR(dayIdx){
   } catch(e){}
 }
 
-function loadCurrentKm(dayIdx){
-  try{
-    const v = localStorage.getItem('current-km-day' + dayIdx);
-    document.getElementById('currentKmInput').value = v || '';
-  } catch(e){
-    document.getElementById('currentKmInput').value = '';
-  }
-}
-
-function saveCurrentKm(dayIdx){
-  try{
-    localStorage.setItem('current-km-day' + dayIdx, document.getElementById('currentKmInput').value);
-  } catch(e){}
-}
-
-document.getElementById('currentKmInput').addEventListener('input', () => {
-  saveCurrentKm(current);
-  renderTimingBadge();
-});
-
 const homeTerrainIds = ['strasse','waldweg','schotter','geroell','sand'].flatMap(t => [`homeTerrain_${t}_km`, `homeTerrain_${t}_pct`]);
 
 function loadHomeTerrain(dayIdx){
+  const d = days[dayIdx];
   try{
     const raw = localStorage.getItem('home-terrain-day' + dayIdx);
-    const data = raw ? JSON.parse(raw) : {};
-    homeTerrainIds.forEach(id => document.getElementById(id).value = data[id] || '');
+    if(raw){
+      const data = JSON.parse(raw);
+      homeTerrainIds.forEach(id => document.getElementById(id).value = data[id] || '');
+    } else if(d.terrainDefaults){
+      const totalKm = parseFloat(d.km) || 0;
+      terrainTypes.forEach(t => {
+        const kmVal = d.terrainDefaults[t.id] || 0;
+        document.getElementById(`homeTerrain_${t.id}_km`).value = kmVal || '';
+        if(totalKm > 0 && kmVal){
+          document.getElementById(`homeTerrain_${t.id}_pct`).value = Math.round((kmVal/totalKm)*1000)/10;
+        } else {
+          document.getElementById(`homeTerrain_${t.id}_pct`).value = '';
+        }
+      });
+      saveHomeTerrain(dayIdx);
+    } else {
+      homeTerrainIds.forEach(id => document.getElementById(id).value = '');
+    }
   } catch(e){
     homeTerrainIds.forEach(id => document.getElementById(id).value = '');
   }
@@ -1263,7 +1392,6 @@ homeTerrainToggleEl.addEventListener('click', () => {
   homeTerrainToggleEl.classList.toggle('open', !open);
 });
 
-// Referenz-Faktor, von dem die ursprünglichen Home-Werte implizit ausgehen (gemischtes Alpin-Gelände)
 const HOME_BASELINE_TERRAIN_FACTOR = 1.2;
 
 function getHomeTerrainAdjustment(){
@@ -1273,10 +1401,10 @@ function getHomeTerrainAdjustment(){
     sumKm += segKm;
     weighted += segKm * t.factor;
   });
-  if(sumKm <= 0) return 1; // keine Angabe -> ursprüngliche Schätzung unverändert
+  if(sumKm <= 0) return 1;
   const weightedFactor = weighted / sumKm;
   const adjustment = weightedFactor / HOME_BASELINE_TERRAIN_FACTOR;
-  return Math.min(Math.max(adjustment, 0.5), 2.5); // Sicherheitsbegrenzung
+  return Math.min(Math.max(adjustment, 0.5), 2.5);
 }
 
 function renderHomeKcal(){
@@ -1288,14 +1416,13 @@ function renderHomeKcal(){
   const terrainAdjustment = getHomeTerrainAdjustment();
   const adjustedAktivKcal = d.aktivKcal * terrainAdjustment;
 
-  // Start 8 Uhr, Bett 23 Uhr, ~7 h Schlaf – Schlaf mit 10 % Absenkung, Rest normale Basis
   const HOME_BMR = 1803;
   const sleepH = 7;
   const sleepDiscount = 0.90;
   const wachBasisH = Math.max(0, 24 - sleepH - d.zeitH);
   const basalKcal = (HOME_BMR / 24) * (sleepH * sleepDiscount + wachBasisH * 1.0);
 
-  const epocPct = computeEpocPct(restHR, maxHR, avgHR, 179); // Fallback-Maxpuls für Alter ~42
+  const epocPct = computeEpocPct(restHR, maxHR, avgHR, 179);
   const epocKcal = adjustedAktivKcal * epocPct;
   const totalKcal = adjustedAktivKcal + basalKcal + epocKcal;
 
@@ -1303,6 +1430,16 @@ function renderHomeKcal(){
   document.getElementById('bdAktiv').textContent = fmtKcal(adjustedAktivKcal);
   document.getElementById('bdBasal').textContent = fmtKcal(basalKcal);
   document.getElementById('bdEpoc').textContent = fmtKcal(epocKcal);
+
+  // Makros nach Rekompositions-Modell: 70 % Kalorien, Eiweiß fix hoch (185 g) zum Muskelerhalt
+  const rekompKcal = totalKcal * 0.70;
+  const rekompProteinG = 185;
+  const rekompKhG = rekompKcal * 0.52 / 4;
+  const rekompFettG = Math.max(0, (rekompKcal - rekompProteinG * 4 - rekompKhG * 4) / 9);
+
+  document.getElementById('kh').textContent = Math.round(rekompKhG) + ' g';
+  document.getElementById('ew').textContent = Math.round(rekompProteinG) + ' g';
+  document.getElementById('ft').textContent = Math.round(rekompFettG) + ' g';
 }
 
 ['homeHrRest','homeHrMax','homeHrAvg'].forEach(id => {
@@ -1312,22 +1449,269 @@ function renderHomeKcal(){
   });
 });
 
-/* ================= Timing: Gel/Nüsse-Hinweise ================= */
-function stageStartKey(dayIdx){ return 'stage-start-day' + dayIdx; }
+/* ================= Zeiterfassung (Home): Start / Pause / Weiter / Ende ================= */
+let activityLog = { status: 'idle', startTs: null, endTs: null, pauses: [] };
 
-function getStageStart(dayIdx){
+function loadActivity(dayIdx){
   try{
-    const v = localStorage.getItem(stageStartKey(dayIdx));
-    return v ? parseInt(v, 10) : null;
-  } catch(e){ return null; }
+    const raw = localStorage.getItem('home-activity-day' + dayIdx);
+    activityLog = raw ? JSON.parse(raw) : { status: 'idle', startTs: null, endTs: null, pauses: [] };
+  } catch(e){
+    activityLog = { status: 'idle', startTs: null, endTs: null, pauses: [] };
+  }
+  renderActivity();
 }
 
-function setStageStart(dayIdx, ts){
-  try{ localStorage.setItem(stageStartKey(dayIdx), String(ts)); } catch(e){}
+function saveActivity(dayIdx){
+  try{ localStorage.setItem('home-activity-day' + dayIdx, JSON.stringify(activityLog)); } catch(e){}
 }
 
-function clearStageStart(dayIdx){
-  try{ localStorage.removeItem(stageStartKey(dayIdx)); } catch(e){}
+function readActivityLog(dayIdx){
+  try{
+    const raw = localStorage.getItem('home-activity-day' + dayIdx);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){
+    return null;
+  }
+}
+
+function fmtActiveDuration(hoursFloat){
+  if(hoursFloat === null || isNaN(hoursFloat)) return '';
+  const totalMin = Math.round(hoursFloat * 60);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return `${h}:${m.toString().padStart(2,'0')} h aktiv`;
+}
+
+function renderActivity(){
+  const statusLabels = { idle: 'Nicht gestartet', active: 'Aktiv', paused: 'Pausiert', ended: 'Beendet' };
+  const durationTxt = activityLog.status !== 'idle' ? ' · ' + fmtActiveDuration(getActiveHours()) : '';
+  document.getElementById('activityStatusText').textContent = statusLabels[activityLog.status] + durationTxt;
+  document.getElementById('btnStart').classList.toggle('disabled', activityLog.status !== 'idle');
+  document.getElementById('btnPause').classList.toggle('disabled', activityLog.status !== 'active');
+  document.getElementById('btnResume').classList.toggle('disabled', activityLog.status !== 'paused');
+  document.getElementById('btnEnd').classList.toggle('disabled', !(activityLog.status === 'active' || activityLog.status === 'paused'));
+}
+
+document.getElementById('btnStart').addEventListener('click', () => {
+  if(activityLog.status !== 'idle') return;
+  activityLog = { status: 'active', startTs: Date.now(), endTs: null, pauses: [] };
+  saveActivity(current);
+  renderActivity();
+  renderWaterStatus();
+  renderTimingBadge();
+});
+
+document.getElementById('btnPause').addEventListener('click', () => {
+  if(activityLog.status !== 'active') return;
+  activityLog.status = 'paused';
+  activityLog.pauses.push({ start: Date.now(), end: null });
+  saveActivity(current);
+  renderActivity();
+  renderTimingBadge();
+});
+
+document.getElementById('btnResume').addEventListener('click', () => {
+  if(activityLog.status !== 'paused') return;
+  const lastPause = activityLog.pauses[activityLog.pauses.length - 1];
+  if(lastPause && !lastPause.end) lastPause.end = Date.now();
+  activityLog.status = 'active';
+  saveActivity(current);
+  renderActivity();
+  renderTimingBadge();
+});
+
+document.getElementById('btnEnd').addEventListener('click', () => {
+  if(activityLog.status !== 'active' && activityLog.status !== 'paused') return;
+  if(activityLog.status === 'paused'){
+    const lastPause = activityLog.pauses[activityLog.pauses.length - 1];
+    if(lastPause && !lastPause.end) lastPause.end = Date.now();
+  }
+  activityLog.status = 'ended';
+  activityLog.endTs = Date.now();
+  saveActivity(current);
+  renderActivity();
+  renderWaterStatus();
+  renderTimingBadge();
+});
+
+setInterval(() => {
+  if(activityLog.status === 'active' || activityLog.status === 'paused'){
+    renderActivity();
+    renderWaterStatus();
+    renderTimingBadge();
+  }
+}, 30000);
+
+/* ================= Schnellerfassung (Home): Lebensmittel + Wasser ================= */
+let quickFoodCounts = { muesli:0, erdnuesse:0, clifbar:0, powergel:0 };
+let waterCount = 0;
+
+function loadQuickFood(dayIdx){
+  try{
+    const raw = localStorage.getItem('home-quickfood-day' + dayIdx);
+    quickFoodCounts = raw ? JSON.parse(raw) : { muesli:0, erdnuesse:0, clifbar:0, powergel:0 };
+  } catch(e){
+    quickFoodCounts = { muesli:0, erdnuesse:0, clifbar:0, powergel:0 };
+  }
+  try{
+    const rawW = localStorage.getItem('home-water-day' + dayIdx);
+    waterCount = rawW ? (parseInt(rawW, 10) || 0) : 0;
+  } catch(e){
+    waterCount = 0;
+  }
+  renderQuickFood();
+  renderWaterStatus();
+}
+
+function saveQuickFood(dayIdx){
+  try{ localStorage.setItem('home-quickfood-day' + dayIdx, JSON.stringify(quickFoodCounts)); } catch(e){}
+  syncQuickFoodToLog(dayIdx);
+}
+
+function saveWaterCount(dayIdx){
+  try{ localStorage.setItem('home-water-day' + dayIdx, String(waterCount)); } catch(e){}
+}
+
+function renderQuickFood(){
+  document.getElementById('qtyMuesli').textContent = quickFoodCounts.muesli || 0;
+  document.getElementById('qtyErdnuesse').textContent = quickFoodCounts.erdnuesse || 0;
+  document.getElementById('qtyClifbar').textContent = quickFoodCounts.clifbar || 0;
+  document.getElementById('qtyPowergel').textContent = quickFoodCounts.powergel || 0;
+  document.getElementById('qtyWasser').textContent = waterCount;
+}
+
+function getActiveHours(){
+  if(!activityLog || activityLog.status === 'idle' || !activityLog.startTs) return null;
+  const now = Date.now();
+  let pausedMs = 0;
+  activityLog.pauses.forEach(p => { pausedMs += (p.end || now) - p.start; });
+  const endRef = activityLog.endTs || now;
+  const activeMs = Math.max(0, (endRef - activityLog.startTs) - pausedMs);
+  return activeMs / 3600000;
+}
+
+const WATER_BASE_ML_PER_KG = 35;
+
+function getBaseWeightKg(){
+  const w = parseFloat(document.getElementById('inWeight').value);
+  return (w && w > 0) ? w : 80;
+}
+
+function computeWaterSollBaseMl(){
+  const now = new Date();
+  const hours = now.getHours() + now.getMinutes() / 60;
+  const dailyTotal = getBaseWeightKg() * WATER_BASE_ML_PER_KG;
+  return Math.round((dailyTotal * (hours / 24)) / 50) * 50;
+}
+
+function computeWaterSollTourMl(d){
+  const totalMl = parseFloat(String(d.waterTotal).replace(',', '.').replace(' L', '')) * 1000;
+  const activeH = getActiveHours();
+  if(activeH === null) return 0;
+  const ratio = Math.min(activeH / d.zeitH, 1);
+  return Math.round((totalMl * ratio) / 50) * 50;
+}
+
+function renderWaterStatus(){
+  const d = days[current];
+  const base = computeWaterSollBaseMl();
+  const tour = computeWaterSollTourMl(d);
+  const total = base + tour;
+  document.getElementById('waterSollBase').textContent = base.toLocaleString('de-DE') + ' ml';
+  document.getElementById('waterSollTour').textContent = tour.toLocaleString('de-DE') + ' ml';
+  document.getElementById('waterSoll').textContent = total.toLocaleString('de-DE') + ' ml';
+  document.getElementById('waterIst').textContent = (waterCount * 100).toLocaleString('de-DE') + ' ml';
+}
+
+function adjustQuickFood(preset, delta){
+  if(preset === 'wasser'){
+    waterCount = Math.max(0, waterCount + delta);
+    document.getElementById('qtyWasser').textContent = waterCount;
+    saveWaterCount(current);
+    renderWaterStatus();
+    return;
+  }
+  quickFoodCounts[preset] = Math.max(0, (quickFoodCounts[preset] || 0) + delta);
+  renderQuickFood();
+  saveQuickFood(current);
+}
+
+document.querySelectorAll('.quick-food-row').forEach(row => {
+  const preset = row.dataset.preset;
+  row.querySelector('.qty-minus').addEventListener('click', () => adjustQuickFood(preset, -1));
+  row.querySelector('.qty-plus').addEventListener('click', () => adjustQuickFood(preset, 1));
+});
+
+function syncQuickFoodToLog(dayIdx){
+  const moduleId = 'macros';
+  const key = foodKey(dayIdx, moduleId);
+  if(!foodEntries[key]){
+    try{
+      const raw = localStorage.getItem(storageKey(dayIdx, moduleId));
+      foodEntries[key] = raw ? JSON.parse(raw) : [];
+    } catch(e){
+      foodEntries[key] = [];
+    }
+  }
+  let entries = (foodEntries[key] || []).filter(e => !e.quickId);
+  Object.keys(quickFoodPresets).forEach(id => {
+    const count = quickFoodCounts[id] || 0;
+    if(count > 0){
+      const p = quickFoodPresets[id];
+      const label = `${p.label} × ${count}`;
+      entries.push({
+        id: 'quick_' + id,
+        quickId: id,
+        text: label,
+        computed: { kcal: Math.round(p.kcal * count), kh: Math.round(p.kh * count * 10) / 10, eiweiss: Math.round(p.ew * count * 10) / 10, fett: Math.round(p.ft * count * 10) / 10 },
+        status: 'done',
+        lastText: label
+      });
+    }
+  });
+  foodEntries[key] = entries;
+  try{ localStorage.setItem(storageKey(dayIdx, moduleId), JSON.stringify(entries)); } catch(e){}
+  if(activeModule && activeModule.dayIdx === dayIdx && activeModule.moduleId === moduleId){
+    renderFoodRows();
+    updateFoodSummary();
+  }
+}
+
+/* ================= Timing: Gel/Nüsse-Hinweise (nutzt die Zeiterfassung oben) ================= */
+function loadCurrentKm(dayIdx){
+  try{
+    const v = localStorage.getItem('current-km-day' + dayIdx);
+    document.getElementById('currentKmInput').value = v || '';
+  } catch(e){
+    document.getElementById('currentKmInput').value = '';
+  }
+}
+
+function saveCurrentKm(dayIdx){
+  try{
+    localStorage.setItem('current-km-day' + dayIdx, document.getElementById('currentKmInput').value);
+  } catch(e){}
+}
+
+document.getElementById('currentKmInput').addEventListener('input', () => {
+  saveCurrentKm(current);
+  renderTimingBadge();
+});
+
+function kmAtElapsedTime(checkpoints, timeH){
+  if(!checkpoints || checkpoints.length === 0) return null;
+  if(timeH <= checkpoints[0][1]) return checkpoints[0][0];
+  for(let i = 1; i < checkpoints.length; i++){
+    const [k0, t0] = checkpoints[i-1];
+    const [k1, t1] = checkpoints[i];
+    if(timeH <= t1){
+      if(t1 === t0) return k0;
+      const frac = (timeH - t0) / (t1 - t0);
+      return k0 + frac * (k1 - k0);
+    }
+  }
+  return checkpoints[checkpoints.length - 1][0];
 }
 
 function fmtMinSec(totalMin){
@@ -1340,20 +1724,13 @@ function fmtMinSec(totalMin){
 function renderTimingBadge(){
   const d = days[current];
   const badge = document.getElementById('timingBadge');
-  const startBtn = document.getElementById('stageStartBtn');
-  const startTs = getStageStart(current);
+  const elapsedH = getActiveHours();
 
-  if(!startTs){
+  if(elapsedH === null){
     badge.style.display = 'none';
-    startBtn.textContent = 'Etappe starten';
-    startBtn.classList.remove('active');
     return;
   }
 
-  startBtn.textContent = 'Etappe zurücksetzen';
-  startBtn.classList.add('active');
-
-  const elapsedH = (Date.now() - startTs) / 3600000;
   const events = d.timingEvents || [];
   const next = events.find(e => e.timeH > elapsedH);
 
@@ -1370,13 +1747,17 @@ function renderTimingBadge(){
     ? `Gel${next.km ? ` (km ${next.km.toLocaleString('de-DE')})` : ''}`
     : 'Nüsse';
 
-  // Zusätzlich, falls km-Position eingetragen: verbleibende km bis zum nächsten Gel-Punkt
   let kmHint = '';
-  const currentKm = parseFloat(document.getElementById('currentKmInput').value);
+  const currentKmRaw = document.getElementById('currentKmInput').value;
+  const currentKm = parseFloat(currentKmRaw);
+
   if(!isNaN(currentKm) && next.type === 'gel' && next.km){
     const remainingKm = Math.round((next.km - currentKm) * 10) / 10;
     if(remainingKm > 0) kmHint = ` · noch ${remainingKm.toLocaleString('de-DE')} km`;
     else kmHint = ` · Punkt erreicht`;
+  } else if(currentKmRaw.trim() === '' && d.paceCheckpoints){
+    const estKm = kmAtElapsedTime(d.paceCheckpoints, elapsedH);
+    if(estKm !== null) kmHint = ` · erwartet ~km ${Math.round(estKm)}`;
   }
 
   badge.style.display = 'flex';
@@ -1385,19 +1766,6 @@ function renderTimingBadge(){
     ? `<span class="dot"></span><span>Jetzt: ${label}${kmHint}</span>`
     : `<span class="dot"></span><span>In ${fmtMinSec(diffMin)}: ${label}${kmHint}</span>`;
 }
-
-document.getElementById('stageStartBtn').addEventListener('click', () => {
-  if(getStageStart(current)){
-    clearStageStart(current);
-  } else {
-    setStageStart(current, Date.now());
-  }
-  renderTimingBadge();
-});
-
-// Live-Aktualisierung alle 30 Sekunden, solange die App offen ist
-setInterval(renderTimingBadge, 30000);
-
 
 function renderModel(){
   const d = days[current];
@@ -1441,9 +1809,9 @@ screen.addEventListener('touchend', e => {
 
 /* ================= Food log modules ================= */
 const foodSheetEl = document.getElementById('foodSheet');
-const foodEntries = {}; // key `${dayIdx}_${moduleId}` -> array of entries
+const foodEntries = {};
 let foodCounter = 0;
-let activeModule = null; // { dayIdx, moduleId, moduleLabel }
+let activeModule = null;
 
 function foodKey(dayIdx, moduleId){ return `${dayIdx}_${moduleId}`; }
 function storageKey(dayIdx, moduleId){ return `foodlog_day${dayIdx}_${moduleId}`; }
@@ -1511,13 +1879,22 @@ function renderFoodRows(){
     input.type = 'text';
     input.placeholder = 'z. B. Tofu 150 Gramm';
     input.value = entry.text;
+    input.disabled = !!entry.quickId;
     input.addEventListener('keydown', e => { if(e.key === 'Enter'){ input.blur(); } });
-    input.addEventListener('blur', () => handleFoodChange(entry.id, input.value));
+    input.addEventListener('blur', () => { if(!entry.quickId) handleFoodChange(entry.id, input.value); });
 
     const removeBtn = document.createElement('div');
     removeBtn.className = 'food-remove';
     removeBtn.textContent = '×';
-    removeBtn.addEventListener('click', () => removeFoodEntry(entry.id));
+    removeBtn.addEventListener('click', () => {
+      if(entry.quickId){
+        quickFoodCounts[entry.quickId] = 0;
+        renderQuickFood();
+        saveQuickFood(dayIdx);
+      } else {
+        removeFoodEntry(entry.id);
+      }
+    });
 
     top.appendChild(input);
     top.appendChild(removeBtn);
@@ -1715,6 +2092,29 @@ function buildDayReport(){
   const round = n => Math.round(n * 10) / 10;
   const diffKcal = round(istKcal - parseFloat(target.kcal.replace('.','').replace(',','.')));
 
+  const actLog = readActivityLog(dayIdx);
+  let activityHtml = '';
+  if(actLog && actLog.startTs){
+    const fmtTime = ts => ts ? new Date(ts).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '–';
+    const pauseCount = actLog.pauses.length;
+    const pauseMs = actLog.pauses.reduce((sum, p) => sum + ((p.end || Date.now()) - p.start), 0);
+    const pauseMin = Math.round(pauseMs / 60000);
+    const endRef = actLog.endTs || Date.now();
+    const activeMs = Math.max(0, (endRef - actLog.startTs) - pauseMs);
+    const activeMin = Math.round(activeMs / 60000);
+    const activeH = Math.floor(activeMin / 60);
+    const activeM = activeMin % 60;
+    activityHtml = `
+  <h2>Zeiterfassung</h2>
+  <table class="compare">
+    <tr><td>Start</td><td>${fmtTime(actLog.startTs)}</td></tr>
+    <tr><td>Ende</td><td>${actLog.endTs ? fmtTime(actLog.endTs) : 'noch nicht beendet'}</td></tr>
+    <tr><td>Pausen</td><td>${pauseCount}</td></tr>
+    <tr><td>Pausendauer gesamt</td><td>${pauseMin} Min</td></tr>
+    <tr><td>Aktive Zeit</td><td>${activeH}:${activeM.toString().padStart(2,'0')} h</td></tr>
+  </table>`;
+  }
+
   let itemsHtml = '';
   Object.keys(itemsByModule).forEach(moduleId => {
     itemsHtml += `<h3>${moduleLabels[moduleId]}</h3><table class="items">`;
@@ -1760,7 +2160,7 @@ function buildDayReport(){
     <tr><td>Eiweiß Ziel / Ist</td><td>${target.ew} / ${round(istEw)} g</td></tr>
     <tr><td>Fett Ziel / Ist</td><td>${target.ft} / ${round(istFt)} g</td></tr>
   </table>
-
+  ${activityHtml}
   <h2>Erfasste Lebensmittel</h2>
   ${itemsHtml}
 </body></html>`;
@@ -1778,7 +2178,14 @@ function buildDayReport(){
 
 document.getElementById('reportBtn').addEventListener('click', buildDayReport);
 
-/* ================= Update-Check ================= */
+/* ================= Offline-Speicherung ================= */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(() => {});
+  });
+}
+
+/* ================= Update-Check (manuell: unten prüfen, oben Banner zum Aktualisieren) ================= */
 const CURRENT_VERSION = document.documentElement.dataset.appVersion;
 let latestKnownVersion = null;
 
@@ -1795,9 +2202,20 @@ async function fetchRemoteVersion(){
   }
 }
 
-function applyUpdate(){
-  const url = window.location.origin + window.location.pathname + '?v=' + Date.now();
-  window.location.href = url;
+const CACHE_NAME = 'transalp-cache-v1';
+
+async function applyUpdate(){
+  try{
+    if('caches' in window){
+      const res = await fetch('./index.html', { cache: 'no-store' });
+      if(res && res.ok){
+        const cache = await caches.open(CACHE_NAME);
+        await cache.put('./', res.clone());
+        await cache.put('./index.html', res.clone());
+      }
+    }
+  } catch(e){}
+  window.location.reload();
 }
 
 async function checkForUpdate(manual){
@@ -1828,7 +2246,6 @@ function showTempMessage(el, msg){
 document.getElementById('updateCheckRow').addEventListener('click', () => checkForUpdate(true));
 document.getElementById('updateBanner').addEventListener('click', applyUpdate);
 
-// leiser Hintergrund-Check kurz nach dem Start
 setTimeout(() => checkForUpdate(false), 1500);
 
 /* ================= Zoom verhindern (Scrollen bleibt erlaubt) ================= */
@@ -1869,7 +2286,6 @@ const terrainFieldIds = terrainTypes.flatMap(t => [`terrain_${t.id}_km`, `terrai
 let customActivity = 'lauf';
 let customGender = 'm';
 
-// gespeicherte Eingaben laden
 let paceManuallyEdited = { flat: false, climb: false };
 try{
   const saved = localStorage.getItem('custom-calc-inputs');
@@ -1905,7 +2321,6 @@ document.querySelectorAll('#inGender .opt-btn').forEach(btn => {
   });
 });
 
-/* ---- E-Bike Zusatzfelder ---- */
 function updateEbikeVisibility(){
   const isRad = customActivity === 'rad';
   document.getElementById('ebikeRow').style.display = isRad ? 'block' : 'none';
@@ -1984,7 +2399,6 @@ function saveCustomInputs(){
   try{ localStorage.setItem('custom-calc-inputs', JSON.stringify(data)); }catch(e){}
 }
 
-/* ---- Untergrund: km <-> % Verknüpfung pro Zeile ---- */
 function terrainKmChanged(id){
   const totalKm = parseFloat(document.getElementById('inKm').value) || 0;
   const kmInput = document.getElementById(`terrain_${id}_km`);
@@ -2056,8 +2470,6 @@ function calcBMR(weight, height, age, gender){
   return gender === 'w' ? base - 161 : base + 5;
 }
 
-/* ================= Nachbrenn-Effekt (EPOC) über Herzfrequenzreserve ================= */
-// Stufenlose Interpolation statt grober Sprünge, damit jede Puls-Änderung sichtbar wirkt
 function classifyEpocPct(hrr){
   const points = [
     [0.00, 0.03],
@@ -2080,8 +2492,8 @@ function classifyEpocPct(hrr){
 }
 
 function computeEpocPct(restHR, maxHR, avgHR, fallbackMaxHR){
-  if(!avgHR) return 0.05; // ganz ohne Pulsdaten: vorsichtige Standard-Annahme
-  const rest = restHR || 60; // sinnvoller Standard-Ruhepuls, falls nicht eingetragen
+  if(!avgHR) return 0.05;
+  const rest = restHR || 60;
   const max = maxHR || fallbackMaxHR;
   if(!max || max <= rest) return 0.05;
   const hrr = (avgHR - rest) / (max - rest);
@@ -2124,7 +2536,6 @@ function runCustomCalc(){
   const efficiency = getEfficiency(vo2max, pace5k);
   const bmr = bmrOverride || calcBMR(weight, height, age, customGender);
 
-  // Systemgewicht (nur relevant bei Radfahren): Körper + Rad + zusätzliches Gepäck
   let systemMass = weight;
   if(customActivity === 'rad'){
     const bikeWeight = parseFloat(document.getElementById('inBikeWeight').value) || 0;
@@ -2132,7 +2543,6 @@ function runCustomCalc(){
     systemMass = weight + bikeWeight + extraWeight;
   }
 
-  // Motoranteil (nur relevant bei Radfahren + aktiviertem E-Bike-Haken)
   let motorShare = 0;
   if(customActivity === 'rad' && document.getElementById('inEbike').checked){
     const percentVal = parseFloat(document.getElementById('inEbikePercent').value) || 0;
@@ -2140,7 +2550,6 @@ function runCustomCalc(){
   }
   const riderFactor = 1 - motorShare;
 
-  // Untergrund: Strecke nach Belag aufgeteilt (falls ausgefüllt), sonst pauschal mit Faktor 1
   let terrainKmTotal = 0;
   let flatKcal = 0;
   let flatTimeH = 0;
@@ -2164,7 +2573,6 @@ function runCustomCalc(){
 
   let activityKcal;
   if(knownWatt > 0){
-    // Gleiche Formel wie in Home: Watt × Zeit ÷ Wirkungsgrad ÷ 4184 – direkt aus gemessener Leistung
     activityKcal = (knownWatt * timeH * 3600) / efficiency / 4184;
   } else {
     const climbMechanicalKcal = systemMass * 9.81 * hm / 4184 * riderFactor;
@@ -2172,8 +2580,6 @@ function runCustomCalc(){
     activityKcal = flatKcal + climbMetabolicKcal;
   }
 
-  // Uhrzeit-Modell: Aktivität startet fix um 8 Uhr. 0–8 Uhr und 22–24 Uhr = Schlaf (10 % Absenkung),
-  // dazwischen bis 22 Uhr normale Basis. Sehr lange Aktivitäten reichen in den späten Schlafblock hinein.
   const sleepDiscount = 0.90;
   const activityEndClock = 8 + timeH;
   const sleepBlock1 = 8;
