@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" data-app-version="2026.08.16-22">
+<html lang="de" data-app-version="2026.08.16-23">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -2207,7 +2207,10 @@ const CACHE_NAME = 'transalp-cache-v1';
 async function applyUpdate(){
   try{
     if('caches' in window){
-      const res = await fetch('./index.html', { cache: 'no-store' });
+      // Cache-Buster nötig: sonst fängt der Service Worker diesen Fetch selbst ab
+      // und liefert (Cache-first) einfach die alte, gecachte Version zurück.
+      const url = './index.html?_=' + Date.now();
+      const res = await fetch(url, { cache: 'no-store' });
       if(res && res.ok){
         const cache = await caches.open(CACHE_NAME);
         await cache.put('./', res.clone());
