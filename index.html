@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" data-app-version="2026.08.16-21">
+<html lang="de" data-app-version="2026.08.12-15">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -8,9 +8,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Transalp">
 <meta name="theme-color" content="#121A24">
-<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%23121A24'/%3E%3Cpath d='M0,72 L18,60 L30,66 L46,40 L58,52 L74,24 L100,38 L100,100 L0,100 Z' fill='%23F0A23C' opacity='0.85'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -167,6 +164,30 @@
   .terrain-toggle .chev{ color: var(--accent-fuel); font-size: 11px; transition: transform 0.2s; }
   .terrain-toggle.open .chev{ transform: rotate(180deg); }
   .terrain-panel{ margin-bottom: 16px; }
+
+  .timing-input-row{ display: flex; align-items: flex-end; gap: 10px; margin-bottom: 16px; }
+  .timing-km-field{ flex: 1; }
+  .timing-start-btn{
+    padding: 11px 16px; border-radius: 10px; border: 1px solid var(--accent-effort);
+    background: rgba(95,191,174,0.1); color: var(--accent-effort);
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; letter-spacing: 0.05em;
+    text-transform: uppercase; cursor: pointer; white-space: nowrap;
+  }
+  .timing-start-btn.active{ border-color: var(--line); background: var(--bg-surface); color: var(--text-muted); }
+
+  .timing-badge{
+    position: absolute; top: 12px; left: 12px; right: 12px;
+    display: flex; align-items: center; gap: 6px;
+    background: rgba(18,26,36,0.85); border: 1px solid var(--accent-fuel);
+    border-radius: 10px; padding: 7px 10px;
+    font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-primary);
+    backdrop-filter: blur(4px);
+  }
+  .timing-badge .dot{ width: 6px; height: 6px; border-radius: 50%; background: var(--accent-fuel); flex-shrink: 0; }
+  .timing-badge.nuts .dot{ background: var(--accent-effort); }
+  .timing-badge.nuts{ border-color: var(--accent-effort); }
+  .timing-badge.due{ animation: timingPulse 1.4s ease-in-out infinite; }
+  @keyframes timingPulse{ 0%,100%{ opacity:1; } 50%{ opacity:0.6; } }
 
   .calc-hero{
     position: relative; border-radius: 18px;
@@ -386,49 +407,6 @@
     color: var(--text-muted); border: 1px solid var(--line); border-radius: 5px;
     padding: 1px 6px; letter-spacing: 0.05em; margin-left: 6px; vertical-align: middle;
   }
-
-  /* ---- Aktivitäts-Tracking (Home) ---- */
-  .activity-tracker{ margin-bottom: 18px; }
-  .activity-status-row{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .activity-status-label{
-    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--text-muted);
-  }
-  .activity-status-value{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent-effort); }
-  .activity-buttons{ display: flex; gap: 8px; }
-  .activity-btn{
-    flex: 1; text-align: center; padding: 10px 4px; border-radius: 10px;
-    border: 1px solid var(--line); background: var(--bg-surface);
-    font-family: 'Inter', sans-serif; font-size: 12.5px; color: var(--text-primary); cursor: pointer;
-    -webkit-user-select: none; user-select: none;
-  }
-  .activity-btn:active{ background: var(--bg-surface-2); }
-  .activity-btn.disabled{ opacity: 0.3; pointer-events: none; }
-
-  /* ---- Schnellerfassung (Home) ---- */
-  .quick-food-section{ margin-bottom: 18px; }
-  .quick-food-title{
-    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em;
-    text-transform: uppercase; color: var(--text-primary); margin-bottom: 10px;
-    padding-bottom: 8px; border-bottom: 1px solid var(--line);
-  }
-  .quick-food-row{ display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line); }
-  .quick-food-row:last-of-type{ border-bottom: none; }
-  .qf-label{ font-size: 13.5px; color: var(--text-primary); }
-  .qf-label .opt{ color: var(--text-muted); font-size: 11px; }
-  .qty-control{ display: flex; align-items: center; gap: 10px; }
-  .qty-btn{
-    width: 28px; height: 28px; border-radius: 50%; background: var(--bg-surface);
-    border: 1px solid var(--line); color: var(--text-primary);
-    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px;
-    -webkit-user-select: none; user-select: none;
-  }
-  .qty-btn:active{ background: var(--bg-surface-2); }
-  .qty-count{ font-family: 'JetBrains Mono', monospace; font-size: 14px; min-width: 18px; text-align: center; }
-  .water-status{ margin-top: 10px; }
-  .water-status-row{ display: flex; justify-content: space-between; padding: 5px 0; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
-  .water-status-row .k{ color: var(--text-muted); }
-  .water-status-row .v{ color: var(--text-primary); font-weight: 500; }
 </style>
 </head>
 <body>
@@ -459,6 +437,14 @@
       <div class="stat"><div class="val" id="km">106 km</div><div class="lbl">Strecke</div></div>
       <div class="stat"><div class="val" id="hm">1.880 Hm</div><div class="lbl">Anstieg</div></div>
       <div class="stat"><div class="val" id="zeit">~11,3 h</div><div class="lbl">Fahrzeit</div></div>
+    </div>
+
+    <div class="timing-input-row">
+      <div class="timing-km-field">
+        <div class="hr-label">Aktuelle Position (km)</div>
+        <input class="hr-input" type="number" inputmode="decimal" id="currentKmInput" placeholder="0">
+      </div>
+      <div class="timing-start-btn" id="stageStartBtn">Etappe starten</div>
     </div>
 
     <div class="hr-field-row">
@@ -513,6 +499,7 @@
         <path id="profileFill" fill="url(#fuelFill)" d=""/>
         <path id="profileLine" fill="none" stroke="#F0A23C" stroke-width="1.5" stroke-opacity="0.65" d=""/>
       </svg>
+      <div class="timing-badge" id="timingBadge" style="display:none;"></div>
       <div class="hero-copy">
         <div class="kcal-num" id="kcal">6.242</div>
         <div class="kcal-lbl">kcal Bedarf</div>
@@ -523,75 +510,6 @@
       <span>Aktivität <b id="bdAktiv">–</b></span>
       <span>Basis <b id="bdBasal">–</b></span>
       <span>Nachbrennen (EPOC) <b id="bdEpoc">–</b></span>
-    </div>
-
-    <div class="activity-tracker" id="activityTracker">
-      <div class="activity-status-row">
-        <div class="activity-status-label">Zeiterfassung</div>
-        <div class="activity-status-value" id="activityStatusText">Nicht gestartet</div>
-      </div>
-      <div class="activity-buttons">
-        <div class="activity-btn" id="btnStart">Start</div>
-        <div class="activity-btn" id="btnPause">Pause</div>
-        <div class="activity-btn" id="btnResume">Weiter</div>
-        <div class="activity-btn" id="btnEnd">Ende</div>
-      </div>
-    </div>
-
-    <div class="quick-food-section" id="quickFoodSection">
-      <div class="quick-food-title">Schnellerfassung</div>
-
-      <div class="quick-food-row" data-preset="muesli">
-        <div class="qf-label">Müsli</div>
-        <div class="qty-control">
-          <div class="qty-btn qty-minus">–</div>
-          <div class="qty-count" id="qtyMuesli">0</div>
-          <div class="qty-btn qty-plus">+</div>
-        </div>
-      </div>
-
-      <div class="quick-food-row" data-preset="erdnuesse">
-        <div class="qf-label">Erdnüsse <span class="opt">(20 g)</span></div>
-        <div class="qty-control">
-          <div class="qty-btn qty-minus">–</div>
-          <div class="qty-count" id="qtyErdnuesse">0</div>
-          <div class="qty-btn qty-plus">+</div>
-        </div>
-      </div>
-
-      <div class="quick-food-row" data-preset="clifbar">
-        <div class="qf-label">Clif Bar Riegel</div>
-        <div class="qty-control">
-          <div class="qty-btn qty-minus">–</div>
-          <div class="qty-count" id="qtyClifbar">0</div>
-          <div class="qty-btn qty-plus">+</div>
-        </div>
-      </div>
-
-      <div class="quick-food-row" data-preset="powergel">
-        <div class="qf-label">Powergel</div>
-        <div class="qty-control">
-          <div class="qty-btn qty-minus">–</div>
-          <div class="qty-count" id="qtyPowergel">0</div>
-          <div class="qty-btn qty-plus">+</div>
-        </div>
-      </div>
-
-      <div class="quick-food-row" data-preset="wasser">
-        <div class="qf-label">Wasser <span class="opt">(100 ml)</span></div>
-        <div class="qty-control">
-          <div class="qty-btn qty-minus">–</div>
-          <div class="qty-count" id="qtyWasser">0</div>
-          <div class="qty-btn qty-plus">+</div>
-        </div>
-      </div>
-
-      <div class="water-status">
-        <div class="water-status-row"><span class="k">Grundbedarf bis jetzt</span><span class="v" id="waterSollBase">– ml</span></div>
-        <div class="water-status-row"><span class="k">Tour-Zusatz bis jetzt</span><span class="v" id="waterSollTour">– ml</span></div>
-        <div class="water-status-row"><span class="k">Soll gesamt</span><span class="v" id="waterSoll">– ml</span></div>
-        <div class="water-status-row"><span class="k">Bereits getrunken</span><span class="v" id="waterIst">0 ml</span></div>
-      </div>
     </div>
 
     <div class="tap-hint" id="tapHint"><span>Antippen für Details</span><span class="chev">▾</span></div>
@@ -1073,18 +991,10 @@ function lookupFoodMacros(text){
   };
 }
 
-/* ===== Schnellwahl-Presets (Home) ===== */
-const quickFoodPresets = {
-  muesli:    { label: 'Müsli', kcal: 592, kh: 53, ew: 33, ft: 27 },
-  erdnuesse: { label: 'Erdnüsse (20 g)', kcal: 113, kh: 3, ew: 5, ft: 10 },
-  clifbar:   { label: 'Clif Bar Riegel', kcal: 267, kh: 36, ew: 10, ft: 8 },
-  powergel:  { label: 'Powergel', kcal: 103, kh: 26, ew: 0, ft: 0 }
-};
-
 const days = [
   {
     route: 'Edelweißspitze <span class="arrow">→</span> Maria Luggau',
-    km: '106 km', hm: '1.880 Hm', zeit: '~11,3 h', aktivKcal:5288, basalKcal:954, zeitH: 11.3, waterTotal:'3,4 L', waterInt:'150 ml alle 30 Min', mgTotal:420, mgMorn:100, mgEve:320, feTotal:16,
+    km: '106 km', hm: '1.880 Hm', zeit: '~11,3 h', aktivKcal:5288, basalKcal:954, zeitH: 11.3, timingEvents: [{type:'nuts', timeH:2.825}, {type:'gel', timeH:4.933, km:46.1}, {type:'nuts', timeH:5.65}, {type:'nuts', timeH:8.475}, {type:'gel', timeH:8.668, km:81.0}], waterTotal:'3,4 L', waterInt:'150 ml alle 30 Min', mgTotal:420, mgMorn:100, mgEve:320, feTotal:16,
     kcal: '6.242', kh: '811 g', ew: '148 g', ft: '267 g',
     wRider: '117 W', wMotor: '145 W', wSystem: '262 W',
     fillD: 'M0,166 L20,160 L45,163 L70,143 L95,150 L120,114 L150,133 L175,95 L205,119 L230,86 L255,105 L285,71 L310,90 L335,57 L360,76 L400,67 L400,190 L0,190 Z',
@@ -1097,7 +1007,7 @@ const days = [
   },
   {
     route: 'Maria Luggau <span class="arrow">→</span> Auronzo di Cadore',
-    km: '60 km', hm: '1.630 Hm', zeit: '~8,3 h', aktivKcal:4150, basalKcal:1180, zeitH: 8.3, waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '60 km', hm: '1.630 Hm', zeit: '~8,3 h', aktivKcal:4150, basalKcal:1180, zeitH: 8.3, timingEvents: [{type:'nuts', timeH:2.075}, {type:'gel', timeH:2.623, km:18.8}, {type:'nuts', timeH:4.15}, {type:'gel', timeH:5.845, km:41.9}, {type:'nuts', timeH:6.225}], waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.330', kh: '693 g', ew: '145 g', ft: '220 g',
     wRider: '125 W', wMotor: '167 W', wSystem: '292 W',
     fillD: 'M0,171 L30,166 L60,169 L90,124 L120,138 L150,76 L180,105 L210,57 L240,90 L270,124 L300,105 L330,143 L360,114 L400,133 L400,190 L0,190 Z',
@@ -1110,7 +1020,7 @@ const days = [
   },
   {
     route: 'Auronzo <span class="arrow">→</span> Rifugio Col Gallina',
-    km: '44 km', hm: '1.870 Hm', zeit: '~7,5 h', aktivKcal:4200, basalKcal:1240, zeitH: 7.5, waterTotal:'2,7 L', waterInt:'180 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '44 km', hm: '1.870 Hm', zeit: '~7,5 h', aktivKcal:4200, basalKcal:1240, zeitH: 7.5, timingEvents: [{type:'nuts', timeH:1.875}, {type:'gel', timeH:3.324, km:19.3}, {type:'nuts', timeH:3.75}, {type:'gel', timeH:5.339, km:31.0}, {type:'nuts', timeH:5.625}], waterTotal:'2,7 L', waterInt:'180 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.440', kh: '707 g', ew: '150 g', ft: '224 g',
     wRider: '140 W', wMotor: '210 W', wSystem: '350 W',
     fillD: 'M0,181 L40,173 L80,176 L120,143 L160,152 L200,86 L230,105 L260,48 L290,71 L320,29 L350,52 L400,19 L400,190 L0,190 Z',
@@ -1123,7 +1033,7 @@ const days = [
   },
   {
     route: 'Rifugio Col Gallina <span class="arrow">→</span> Karerpass',
-    km: '63 km', hm: '1.500 Hm', zeit: '~8,4 h', aktivKcal:4099, basalKcal:1172, zeitH: 8.4, waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '63 km', hm: '1.500 Hm', zeit: '~8,4 h', aktivKcal:4099, basalKcal:1172, zeitH: 8.4, timingEvents: [{type:'nuts', timeH:2.1}, {type:'gel', timeH:2.868, km:23.3}, {type:'nuts', timeH:4.2}, {type:'nuts', timeH:6.3}, {type:'gel', timeH:7.841, km:58.8}], waterTotal:'2,7 L', waterInt:'160 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.271', kh: '685 g', ew: '146 g', ft: '216 g',
     wRider: '122 W', wMotor: '159 W', wSystem: '281 W',
     fillD: 'M0,133 L30,114 L60,143 L90,95 L120,124 L150,76 L180,143 L210,105 L240,152 L270,114 L300,138 L330,86 L360,110 L400,76 L400,190 L0,190 Z',
@@ -1136,7 +1046,7 @@ const days = [
   },
   {
     route: 'Karerpass <span class="arrow">→</span> Mezzolombardo',
-    km: '65 km', hm: '1.100 Hm', zeit: '~6,5 h', aktivKcal:3016, basalKcal:1315, zeitH: 6.5, waterTotal:'2,0 L', waterInt:'150 ml alle 30 Min', mgTotal:400, mgMorn:100, mgEve:300, feTotal:15,
+    km: '65 km', hm: '1.100 Hm', zeit: '~6,5 h', aktivKcal:3016, basalKcal:1315, zeitH: 6.5, timingEvents: [{type:'gel', timeH:0.59, km:5.9}, {type:'gel', timeH:1.53, km:15.3}, {type:'nuts', timeH:1.625}, {type:'nuts', timeH:3.25}, {type:'nuts', timeH:4.875}], waterTotal:'2,0 L', waterInt:'150 ml alle 30 Min', mgTotal:400, mgMorn:100, mgEve:300, feTotal:15,
     kcal: '4.331', kh: '563 g', ew: '140 g', ft: '169 g',
     wRider: '116 W', wMotor: '142 W', wSystem: '258 W',
     fillD: 'M0,143 L40,133 L80,148 L120,129 L160,138 L190,86 L220,114 L260,152 L300,166 L340,176 L400,181 L400,190 L0,190 Z',
@@ -1149,7 +1059,7 @@ const days = [
   },
   {
     route: 'Mezzolombardo <span class="arrow">→</span> Torbole',
-    km: '76 km', hm: '1.350 Hm', zeit: '~8,4 h', aktivKcal:3931, basalKcal:1172, zeitH: 8.4, waterTotal:'2,6 L', waterInt:'150 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
+    km: '76 km', hm: '1.350 Hm', zeit: '~8,4 h', aktivKcal:3931, basalKcal:1172, zeitH: 8.4, timingEvents: [{type:'gel', timeH:1.26, km:11.4}, {type:'gel', timeH:1.492, km:13.5}, {type:'nuts', timeH:2.1}, {type:'nuts', timeH:4.2}, {type:'nuts', timeH:6.3}], waterTotal:'2,6 L', waterInt:'150 ml alle 30 Min', mgTotal:410, mgMorn:100, mgEve:310, feTotal:16,
     kcal: '5.103', kh: '663 g', ew: '144 g', ft: '208 g',
     wRider: '117 W', wMotor: '145 W', wSystem: '262 W',
     fillD: 'M0,176 L30,114 L60,86 L90,57 L120,81 L150,124 L180,105 L210,143 L240,119 L270,148 L300,129 L330,152 L360,138 L400,157 L400,190 L0,190 Z',
@@ -1214,9 +1124,9 @@ function render(){
 
   loadHomeHR(current);
   loadHomeTerrain(current);
-  loadActivity(current);
-  loadQuickFood(current);
   renderHomeKcal();
+  loadCurrentKm(current);
+  renderTimingBadge();
 
   [...pager.children].forEach((el, i) => el.classList.toggle('active', i === current));
   document.getElementById('prevBtn').classList.toggle('disabled', current === 0);
@@ -1255,6 +1165,26 @@ function saveHomeHR(dayIdx){
     localStorage.setItem('home-hr-day' + dayIdx, JSON.stringify(data));
   } catch(e){}
 }
+
+function loadCurrentKm(dayIdx){
+  try{
+    const v = localStorage.getItem('current-km-day' + dayIdx);
+    document.getElementById('currentKmInput').value = v || '';
+  } catch(e){
+    document.getElementById('currentKmInput').value = '';
+  }
+}
+
+function saveCurrentKm(dayIdx){
+  try{
+    localStorage.setItem('current-km-day' + dayIdx, document.getElementById('currentKmInput').value);
+  } catch(e){}
+}
+
+document.getElementById('currentKmInput').addEventListener('input', () => {
+  saveCurrentKm(current);
+  renderTimingBadge();
+});
 
 const homeTerrainIds = ['strasse','waldweg','schotter','geroell','sand'].flatMap(t => [`homeTerrain_${t}_km`, `homeTerrain_${t}_pct`]);
 
@@ -1382,232 +1312,92 @@ function renderHomeKcal(){
   });
 });
 
-/* ================= Zeiterfassung (Home): Start / Pause / Weiter / Ende ================= */
-let activityLog = { status: 'idle', startTs: null, endTs: null, pauses: [] };
+/* ================= Timing: Gel/Nüsse-Hinweise ================= */
+function stageStartKey(dayIdx){ return 'stage-start-day' + dayIdx; }
 
-function loadActivity(dayIdx){
+function getStageStart(dayIdx){
   try{
-    const raw = localStorage.getItem('home-activity-day' + dayIdx);
-    activityLog = raw ? JSON.parse(raw) : { status: 'idle', startTs: null, endTs: null, pauses: [] };
-  } catch(e){
-    activityLog = { status: 'idle', startTs: null, endTs: null, pauses: [] };
-  }
-  renderActivity();
+    const v = localStorage.getItem(stageStartKey(dayIdx));
+    return v ? parseInt(v, 10) : null;
+  } catch(e){ return null; }
 }
 
-function saveActivity(dayIdx){
-  try{ localStorage.setItem('home-activity-day' + dayIdx, JSON.stringify(activityLog)); } catch(e){}
+function setStageStart(dayIdx, ts){
+  try{ localStorage.setItem(stageStartKey(dayIdx), String(ts)); } catch(e){}
 }
 
-function readActivityLog(dayIdx){
-  try{
-    const raw = localStorage.getItem('home-activity-day' + dayIdx);
-    return raw ? JSON.parse(raw) : null;
-  } catch(e){
-    return null;
-  }
+function clearStageStart(dayIdx){
+  try{ localStorage.removeItem(stageStartKey(dayIdx)); } catch(e){}
 }
 
-function fmtActiveDuration(hoursFloat){
-  if(hoursFloat === null || isNaN(hoursFloat)) return '';
-  const totalMin = Math.round(hoursFloat * 60);
+function fmtMinSec(totalMin){
   const h = Math.floor(totalMin / 60);
-  const m = totalMin % 60;
-  return `${h}:${m.toString().padStart(2,'0')} h aktiv`;
+  const m = Math.round(totalMin % 60);
+  if(h > 0) return `${h} Std ${m} Min`;
+  return `${m} Min`;
 }
 
-function renderActivity(){
-  const statusLabels = { idle: 'Nicht gestartet', active: 'Aktiv', paused: 'Pausiert', ended: 'Beendet' };
-  const durationTxt = activityLog.status !== 'idle' ? ' · ' + fmtActiveDuration(getActiveHours()) : '';
-  document.getElementById('activityStatusText').textContent = statusLabels[activityLog.status] + durationTxt;
-  document.getElementById('btnStart').classList.toggle('disabled', activityLog.status !== 'idle');
-  document.getElementById('btnPause').classList.toggle('disabled', activityLog.status !== 'active');
-  document.getElementById('btnResume').classList.toggle('disabled', activityLog.status !== 'paused');
-  document.getElementById('btnEnd').classList.toggle('disabled', !(activityLog.status === 'active' || activityLog.status === 'paused'));
-}
-
-document.getElementById('btnStart').addEventListener('click', () => {
-  if(activityLog.status !== 'idle') return;
-  activityLog = { status: 'active', startTs: Date.now(), endTs: null, pauses: [] };
-  saveActivity(current);
-  renderActivity();
-  renderWaterStatus();
-});
-
-document.getElementById('btnPause').addEventListener('click', () => {
-  if(activityLog.status !== 'active') return;
-  activityLog.status = 'paused';
-  activityLog.pauses.push({ start: Date.now(), end: null });
-  saveActivity(current);
-  renderActivity();
-});
-
-document.getElementById('btnResume').addEventListener('click', () => {
-  if(activityLog.status !== 'paused') return;
-  const lastPause = activityLog.pauses[activityLog.pauses.length - 1];
-  if(lastPause && !lastPause.end) lastPause.end = Date.now();
-  activityLog.status = 'active';
-  saveActivity(current);
-  renderActivity();
-});
-
-document.getElementById('btnEnd').addEventListener('click', () => {
-  if(activityLog.status !== 'active' && activityLog.status !== 'paused') return;
-  if(activityLog.status === 'paused'){
-    const lastPause = activityLog.pauses[activityLog.pauses.length - 1];
-    if(lastPause && !lastPause.end) lastPause.end = Date.now();
-  }
-  activityLog.status = 'ended';
-  activityLog.endTs = Date.now();
-  saveActivity(current);
-  renderActivity();
-  renderWaterStatus();
-});
-
-// Lebendige Anzeige: Aktivzeit und Wasser-Soll jede Minute nachziehen
-setInterval(() => {
-  if(activityLog.status === 'active' || activityLog.status === 'paused'){
-    renderActivity();
-    renderWaterStatus();
-  }
-}, 60000);
-
-/* ================= Schnellerfassung (Home): Lebensmittel + Wasser ================= */
-let quickFoodCounts = { muesli:0, erdnuesse:0, clifbar:0, powergel:0 };
-let waterCount = 0; // Anzahl 100-ml-Einheiten
-
-function loadQuickFood(dayIdx){
-  try{
-    const raw = localStorage.getItem('home-quickfood-day' + dayIdx);
-    quickFoodCounts = raw ? JSON.parse(raw) : { muesli:0, erdnuesse:0, clifbar:0, powergel:0 };
-  } catch(e){
-    quickFoodCounts = { muesli:0, erdnuesse:0, clifbar:0, powergel:0 };
-  }
-  try{
-    const rawW = localStorage.getItem('home-water-day' + dayIdx);
-    waterCount = rawW ? (parseInt(rawW, 10) || 0) : 0;
-  } catch(e){
-    waterCount = 0;
-  }
-  renderQuickFood();
-  renderWaterStatus();
-}
-
-function saveQuickFood(dayIdx){
-  try{ localStorage.setItem('home-quickfood-day' + dayIdx, JSON.stringify(quickFoodCounts)); } catch(e){}
-  syncQuickFoodToLog(dayIdx);
-}
-
-function saveWaterCount(dayIdx){
-  try{ localStorage.setItem('home-water-day' + dayIdx, String(waterCount)); } catch(e){}
-}
-
-function renderQuickFood(){
-  document.getElementById('qtyMuesli').textContent = quickFoodCounts.muesli || 0;
-  document.getElementById('qtyErdnuesse').textContent = quickFoodCounts.erdnuesse || 0;
-  document.getElementById('qtyClifbar').textContent = quickFoodCounts.clifbar || 0;
-  document.getElementById('qtyPowergel').textContent = quickFoodCounts.powergel || 0;
-  document.getElementById('qtyWasser').textContent = waterCount;
-}
-
-function getActiveHours(){
-  if(!activityLog || activityLog.status === 'idle' || !activityLog.startTs) return null;
-  const now = Date.now();
-  let pausedMs = 0;
-  activityLog.pauses.forEach(p => { pausedMs += (p.end || now) - p.start; });
-  const endRef = activityLog.endTs || now;
-  const activeMs = Math.max(0, (endRef - activityLog.startTs) - pausedMs);
-  return activeMs / 3600000;
-}
-
-const WATER_BASE_ML_PER_KG = 35; // allgemeiner Richtwert für den normalen Tagesbedarf
-
-function getBaseWeightKg(){
-  const w = parseFloat(document.getElementById('inWeight').value);
-  return (w && w > 0) ? w : 80; // Fallback: Eckdaten-Gewicht
-}
-
-function computeWaterSollBaseMl(){
-  const now = new Date();
-  const hours = now.getHours() + now.getMinutes() / 60;
-  const dailyTotal = getBaseWeightKg() * WATER_BASE_ML_PER_KG;
-  return Math.round((dailyTotal * (hours / 24)) / 50) * 50;
-}
-
-function computeWaterSollTourMl(d){
-  const totalMl = parseFloat(String(d.waterTotal).replace(',', '.').replace(' L', '')) * 1000;
-  const activeH = getActiveHours();
-  if(activeH === null) return 0; // Zeiterfassung noch nicht gestartet -> noch kein Tour-Zusatzbedarf
-  const ratio = Math.min(activeH / d.zeitH, 1);
-  return Math.round((totalMl * ratio) / 50) * 50;
-}
-
-function renderWaterStatus(){
+function renderTimingBadge(){
   const d = days[current];
-  const base = computeWaterSollBaseMl();
-  const tour = computeWaterSollTourMl(d);
-  const total = base + tour;
-  document.getElementById('waterSollBase').textContent = base.toLocaleString('de-DE') + ' ml';
-  document.getElementById('waterSollTour').textContent = tour.toLocaleString('de-DE') + ' ml';
-  document.getElementById('waterSoll').textContent = total.toLocaleString('de-DE') + ' ml';
-  document.getElementById('waterIst').textContent = (waterCount * 100).toLocaleString('de-DE') + ' ml';
-}
+  const badge = document.getElementById('timingBadge');
+  const startBtn = document.getElementById('stageStartBtn');
+  const startTs = getStageStart(current);
 
-function adjustQuickFood(preset, delta){
-  if(preset === 'wasser'){
-    waterCount = Math.max(0, waterCount + delta);
-    document.getElementById('qtyWasser').textContent = waterCount;
-    saveWaterCount(current);
-    renderWaterStatus();
+  if(!startTs){
+    badge.style.display = 'none';
+    startBtn.textContent = 'Etappe starten';
+    startBtn.classList.remove('active');
     return;
   }
-  quickFoodCounts[preset] = Math.max(0, (quickFoodCounts[preset] || 0) + delta);
-  renderQuickFood();
-  saveQuickFood(current);
+
+  startBtn.textContent = 'Etappe zurücksetzen';
+  startBtn.classList.add('active');
+
+  const elapsedH = (Date.now() - startTs) / 3600000;
+  const events = d.timingEvents || [];
+  const next = events.find(e => e.timeH > elapsedH);
+
+  if(!next){
+    badge.style.display = 'flex';
+    badge.className = 'timing-badge';
+    badge.innerHTML = `<span class="dot"></span><span>Alle Hinweise für heute erledigt ✓</span>`;
+    return;
+  }
+
+  const diffMin = (next.timeH - elapsedH) * 60;
+  const isDue = diffMin <= 5;
+  const label = next.type === 'gel'
+    ? `Gel${next.km ? ` (km ${next.km.toLocaleString('de-DE')})` : ''}`
+    : 'Nüsse';
+
+  // Zusätzlich, falls km-Position eingetragen: verbleibende km bis zum nächsten Gel-Punkt
+  let kmHint = '';
+  const currentKm = parseFloat(document.getElementById('currentKmInput').value);
+  if(!isNaN(currentKm) && next.type === 'gel' && next.km){
+    const remainingKm = Math.round((next.km - currentKm) * 10) / 10;
+    if(remainingKm > 0) kmHint = ` · noch ${remainingKm.toLocaleString('de-DE')} km`;
+    else kmHint = ` · Punkt erreicht`;
+  }
+
+  badge.style.display = 'flex';
+  badge.className = 'timing-badge' + (next.type === 'nuts' ? ' nuts' : '') + (isDue ? ' due' : '');
+  badge.innerHTML = isDue
+    ? `<span class="dot"></span><span>Jetzt: ${label}${kmHint}</span>`
+    : `<span class="dot"></span><span>In ${fmtMinSec(diffMin)}: ${label}${kmHint}</span>`;
 }
 
-document.querySelectorAll('.quick-food-row').forEach(row => {
-  const preset = row.dataset.preset;
-  row.querySelector('.qty-minus').addEventListener('click', () => adjustQuickFood(preset, -1));
-  row.querySelector('.qty-plus').addEventListener('click', () => adjustQuickFood(preset, 1));
+document.getElementById('stageStartBtn').addEventListener('click', () => {
+  if(getStageStart(current)){
+    clearStageStart(current);
+  } else {
+    setStageStart(current, Date.now());
+  }
+  renderTimingBadge();
 });
 
-// Schnellwahl-Einträge in den bestehenden Lebensmittel-Log (Modul "macros") einspielen,
-// damit sie im Food-Sheet und im Tagesbericht mit auftauchen.
-function syncQuickFoodToLog(dayIdx){
-  const moduleId = 'macros';
-  const key = foodKey(dayIdx, moduleId);
-  if(!foodEntries[key]){
-    try{
-      const raw = localStorage.getItem(storageKey(dayIdx, moduleId));
-      foodEntries[key] = raw ? JSON.parse(raw) : [];
-    } catch(e){
-      foodEntries[key] = [];
-    }
-  }
-  let entries = (foodEntries[key] || []).filter(e => !e.quickId);
-  Object.keys(quickFoodPresets).forEach(id => {
-    const count = quickFoodCounts[id] || 0;
-    if(count > 0){
-      const p = quickFoodPresets[id];
-      const label = `${p.label} × ${count}`;
-      entries.push({
-        id: 'quick_' + id,
-        quickId: id,
-        text: label,
-        computed: { kcal: Math.round(p.kcal * count), kh: Math.round(p.kh * count * 10) / 10, eiweiss: Math.round(p.ew * count * 10) / 10, fett: Math.round(p.ft * count * 10) / 10 },
-        status: 'done',
-        lastText: label
-      });
-    }
-  });
-  foodEntries[key] = entries;
-  try{ localStorage.setItem(storageKey(dayIdx, moduleId), JSON.stringify(entries)); } catch(e){}
-  if(activeModule && activeModule.dayIdx === dayIdx && activeModule.moduleId === moduleId){
-    renderFoodRows();
-    updateFoodSummary();
-  }
-}
+// Live-Aktualisierung alle 30 Sekunden, solange die App offen ist
+setInterval(renderTimingBadge, 30000);
+
 
 function renderModel(){
   const d = days[current];
@@ -1721,22 +1511,13 @@ function renderFoodRows(){
     input.type = 'text';
     input.placeholder = 'z. B. Tofu 150 Gramm';
     input.value = entry.text;
-    input.disabled = !!entry.quickId;
     input.addEventListener('keydown', e => { if(e.key === 'Enter'){ input.blur(); } });
-    input.addEventListener('blur', () => { if(!entry.quickId) handleFoodChange(entry.id, input.value); });
+    input.addEventListener('blur', () => handleFoodChange(entry.id, input.value));
 
     const removeBtn = document.createElement('div');
     removeBtn.className = 'food-remove';
     removeBtn.textContent = '×';
-    removeBtn.addEventListener('click', () => {
-      if(entry.quickId){
-        quickFoodCounts[entry.quickId] = 0;
-        renderQuickFood();
-        saveQuickFood(dayIdx);
-      } else {
-        removeFoodEntry(entry.id);
-      }
-    });
+    removeBtn.addEventListener('click', () => removeFoodEntry(entry.id));
 
     top.appendChild(input);
     top.appendChild(removeBtn);
@@ -1934,29 +1715,6 @@ function buildDayReport(){
   const round = n => Math.round(n * 10) / 10;
   const diffKcal = round(istKcal - parseFloat(target.kcal.replace('.','').replace(',','.')));
 
-  const actLog = readActivityLog(dayIdx);
-  let activityHtml = '';
-  if(actLog && actLog.startTs){
-    const fmtTime = ts => ts ? new Date(ts).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '–';
-    const pauseCount = actLog.pauses.length;
-    const pauseMs = actLog.pauses.reduce((sum, p) => sum + ((p.end || Date.now()) - p.start), 0);
-    const pauseMin = Math.round(pauseMs / 60000);
-    const endRef = actLog.endTs || Date.now();
-    const activeMs = Math.max(0, (endRef - actLog.startTs) - pauseMs);
-    const activeMin = Math.round(activeMs / 60000);
-    const activeH = Math.floor(activeMin / 60);
-    const activeM = activeMin % 60;
-    activityHtml = `
-  <h2>Zeiterfassung</h2>
-  <table class="compare">
-    <tr><td>Start</td><td>${fmtTime(actLog.startTs)}</td></tr>
-    <tr><td>Ende</td><td>${actLog.endTs ? fmtTime(actLog.endTs) : 'noch nicht beendet'}</td></tr>
-    <tr><td>Pausen</td><td>${pauseCount}</td></tr>
-    <tr><td>Pausendauer gesamt</td><td>${pauseMin} Min</td></tr>
-    <tr><td>Aktive Zeit</td><td>${activeH}:${activeM.toString().padStart(2,'0')} h</td></tr>
-  </table>`;
-  }
-
   let itemsHtml = '';
   Object.keys(itemsByModule).forEach(moduleId => {
     itemsHtml += `<h3>${moduleLabels[moduleId]}</h3><table class="items">`;
@@ -2002,7 +1760,7 @@ function buildDayReport(){
     <tr><td>Eiweiß Ziel / Ist</td><td>${target.ew} / ${round(istEw)} g</td></tr>
     <tr><td>Fett Ziel / Ist</td><td>${target.ft} / ${round(istFt)} g</td></tr>
   </table>
-  ${activityHtml}
+
   <h2>Erfasste Lebensmittel</h2>
   ${itemsHtml}
 </body></html>`;
@@ -2020,16 +1778,7 @@ function buildDayReport(){
 
 document.getElementById('reportBtn').addEventListener('click', buildDayReport);
 
-/* ================= Offline-Speicherung ================= */
-// Der Service Worker speichert den App-Code lokal auf dem Gerät (App läuft auch offline)
-// und sorgt dafür, dass ein durchgeführtes Update den lokalen Stand zuverlässig überschreibt.
-if('serviceWorker' in navigator){
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js').catch(() => {});
-  });
-}
-
-/* ================= Update-Check (manuell: unten prüfen, oben Banner zum Aktualisieren) ================= */
+/* ================= Update-Check ================= */
 const CURRENT_VERSION = document.documentElement.dataset.appVersion;
 let latestKnownVersion = null;
 
@@ -2046,20 +1795,9 @@ async function fetchRemoteVersion(){
   }
 }
 
-const CACHE_NAME = 'transalp-cache-v1'; // muss mit sw.js übereinstimmen
-
-async function applyUpdate(){
-  try{
-    if('caches' in window){
-      const res = await fetch('./index.html', { cache: 'no-store' });
-      if(res && res.ok){
-        const cache = await caches.open(CACHE_NAME);
-        await cache.put('./', res.clone());
-        await cache.put('./index.html', res.clone());
-      }
-    }
-  } catch(e){}
-  window.location.reload();
+function applyUpdate(){
+  const url = window.location.origin + window.location.pathname + '?v=' + Date.now();
+  window.location.href = url;
 }
 
 async function checkForUpdate(manual){
@@ -2090,7 +1828,7 @@ function showTempMessage(el, msg){
 document.getElementById('updateCheckRow').addEventListener('click', () => checkForUpdate(true));
 document.getElementById('updateBanner').addEventListener('click', applyUpdate);
 
-// leiser Hintergrund-Check kurz nach dem Start (zeigt nur den Banner, aktualisiert nicht automatisch)
+// leiser Hintergrund-Check kurz nach dem Start
 setTimeout(() => checkForUpdate(false), 1500);
 
 /* ================= Zoom verhindern (Scrollen bleibt erlaubt) ================= */
