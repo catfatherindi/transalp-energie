@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="de" data-app-version="2026.08.12-13">
+<html lang="de" data-app-version="2026.08.16-17">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -383,6 +383,49 @@
     color: var(--text-muted); border: 1px solid var(--line); border-radius: 5px;
     padding: 1px 6px; letter-spacing: 0.05em; margin-left: 6px; vertical-align: middle;
   }
+
+  /* ---- Aktivitäts-Tracking (Home) ---- */
+  .activity-tracker{ margin-bottom: 18px; }
+  .activity-status-row{ display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+  .activity-status-label{
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-muted);
+  }
+  .activity-status-value{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent-effort); }
+  .activity-buttons{ display: flex; gap: 8px; }
+  .activity-btn{
+    flex: 1; text-align: center; padding: 10px 4px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--bg-surface);
+    font-family: 'Inter', sans-serif; font-size: 12.5px; color: var(--text-primary); cursor: pointer;
+    -webkit-user-select: none; user-select: none;
+  }
+  .activity-btn:active{ background: var(--bg-surface-2); }
+  .activity-btn.disabled{ opacity: 0.3; pointer-events: none; }
+
+  /* ---- Schnellerfassung (Home) ---- */
+  .quick-food-section{ margin-bottom: 18px; }
+  .quick-food-title{
+    font-family: 'JetBrains Mono', monospace; font-size: 10.5px; letter-spacing: 0.1em;
+    text-transform: uppercase; color: var(--text-primary); margin-bottom: 10px;
+    padding-bottom: 8px; border-bottom: 1px solid var(--line);
+  }
+  .quick-food-row{ display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--line); }
+  .quick-food-row:last-of-type{ border-bottom: none; }
+  .qf-label{ font-size: 13.5px; color: var(--text-primary); }
+  .qf-label .opt{ color: var(--text-muted); font-size: 11px; }
+  .qty-control{ display: flex; align-items: center; gap: 10px; }
+  .qty-btn{
+    width: 28px; height: 28px; border-radius: 50%; background: var(--bg-surface);
+    border: 1px solid var(--line); color: var(--text-primary);
+    display: flex; align-items: center; justify-content: center; cursor: pointer; font-size: 15px;
+    -webkit-user-select: none; user-select: none;
+  }
+  .qty-btn:active{ background: var(--bg-surface-2); }
+  .qty-count{ font-family: 'JetBrains Mono', monospace; font-size: 14px; min-width: 18px; text-align: center; }
+  .water-status{ margin-top: 10px; }
+  .water-status-row{ display: flex; justify-content: space-between; padding: 5px 0; font-family: 'JetBrains Mono', monospace; font-size: 11.5px; }
+  .water-status-row .k{ color: var(--text-muted); }
+  .water-status-row .v{ color: var(--text-primary); font-weight: 500; }
 </style>
 </head>
 <body>
@@ -477,6 +520,75 @@
       <span>Aktivität <b id="bdAktiv">–</b></span>
       <span>Basis <b id="bdBasal">–</b></span>
       <span>Nachbrennen (EPOC) <b id="bdEpoc">–</b></span>
+    </div>
+
+    <div class="activity-tracker" id="activityTracker">
+      <div class="activity-status-row">
+        <div class="activity-status-label">Zeiterfassung</div>
+        <div class="activity-status-value" id="activityStatusText">Nicht gestartet</div>
+      </div>
+      <div class="activity-buttons">
+        <div class="activity-btn" id="btnStart">Start</div>
+        <div class="activity-btn" id="btnPause">Pause</div>
+        <div class="activity-btn" id="btnResume">Weiter</div>
+        <div class="activity-btn" id="btnEnd">Ende</div>
+      </div>
+    </div>
+
+    <div class="quick-food-section" id="quickFoodSection">
+      <div class="quick-food-title">Schnellerfassung</div>
+
+      <div class="quick-food-row" data-preset="muesli">
+        <div class="qf-label">Müsli</div>
+        <div class="qty-control">
+          <div class="qty-btn qty-minus">–</div>
+          <div class="qty-count" id="qtyMuesli">0</div>
+          <div class="qty-btn qty-plus">+</div>
+        </div>
+      </div>
+
+      <div class="quick-food-row" data-preset="erdnuesse">
+        <div class="qf-label">Erdnüsse <span class="opt">(20 g)</span></div>
+        <div class="qty-control">
+          <div class="qty-btn qty-minus">–</div>
+          <div class="qty-count" id="qtyErdnuesse">0</div>
+          <div class="qty-btn qty-plus">+</div>
+        </div>
+      </div>
+
+      <div class="quick-food-row" data-preset="clifbar">
+        <div class="qf-label">Clif Bar Riegel</div>
+        <div class="qty-control">
+          <div class="qty-btn qty-minus">–</div>
+          <div class="qty-count" id="qtyClifbar">0</div>
+          <div class="qty-btn qty-plus">+</div>
+        </div>
+      </div>
+
+      <div class="quick-food-row" data-preset="powergel">
+        <div class="qf-label">Powergel</div>
+        <div class="qty-control">
+          <div class="qty-btn qty-minus">–</div>
+          <div class="qty-count" id="qtyPowergel">0</div>
+          <div class="qty-btn qty-plus">+</div>
+        </div>
+      </div>
+
+      <div class="quick-food-row" data-preset="wasser">
+        <div class="qf-label">Wasser <span class="opt">(100 ml)</span></div>
+        <div class="qty-control">
+          <div class="qty-btn qty-minus">–</div>
+          <div class="qty-count" id="qtyWasser">0</div>
+          <div class="qty-btn qty-plus">+</div>
+        </div>
+      </div>
+
+      <div class="water-status">
+        <div class="water-status-row"><span class="k">Grundbedarf bis jetzt</span><span class="v" id="waterSollBase">– ml</span></div>
+        <div class="water-status-row"><span class="k">Tour-Zusatz bis jetzt</span><span class="v" id="waterSollTour">– ml</span></div>
+        <div class="water-status-row"><span class="k">Soll gesamt</span><span class="v" id="waterSoll">– ml</span></div>
+        <div class="water-status-row"><span class="k">Bereits getrunken</span><span class="v" id="waterIst">0 ml</span></div>
+      </div>
     </div>
 
     <div class="tap-hint" id="tapHint"><span>Antippen für Details</span><span class="chev">▾</span></div>
@@ -958,6 +1070,14 @@ function lookupFoodMacros(text){
   };
 }
 
+/* ===== Schnellwahl-Presets (Home) ===== */
+const quickFoodPresets = {
+  muesli:    { label: 'Müsli', kcal: 592, kh: 53, ew: 33, ft: 27 },
+  erdnuesse: { label: 'Erdnüsse (20 g)', kcal: 113, kh: 3, ew: 5, ft: 10 },
+  clifbar:   { label: 'Clif Bar Riegel', kcal: 267, kh: 36, ew: 10, ft: 8 },
+  powergel:  { label: 'Powergel', kcal: 103, kh: 26, ew: 0, ft: 0 }
+};
+
 const days = [
   {
     route: 'Edelweißspitze <span class="arrow">→</span> Maria Luggau',
@@ -1091,6 +1211,8 @@ function render(){
 
   loadHomeHR(current);
   loadHomeTerrain(current);
+  loadActivity(current);
+  loadQuickFood(current);
   renderHomeKcal();
 
   [...pager.children].forEach((el, i) => el.classList.toggle('active', i === current));
@@ -1233,13 +1355,20 @@ function renderHomeKcal(){
   const terrainAdjustment = getHomeTerrainAdjustment();
   const adjustedAktivKcal = d.aktivKcal * terrainAdjustment;
 
+  // Start 8 Uhr, Bett 23 Uhr, ~7 h Schlaf – Schlaf mit 10 % Absenkung, Rest normale Basis
+  const HOME_BMR = 1803;
+  const sleepH = 7;
+  const sleepDiscount = 0.90;
+  const wachBasisH = Math.max(0, 24 - sleepH - d.zeitH);
+  const basalKcal = (HOME_BMR / 24) * (sleepH * sleepDiscount + wachBasisH * 1.0);
+
   const epocPct = computeEpocPct(restHR, maxHR, avgHR, 179); // Fallback-Maxpuls für Alter ~42
   const epocKcal = adjustedAktivKcal * epocPct;
-  const totalKcal = adjustedAktivKcal + d.basalKcal + epocKcal;
+  const totalKcal = adjustedAktivKcal + basalKcal + epocKcal;
 
   document.getElementById('kcal').textContent = Math.round(totalKcal).toLocaleString('de-DE');
   document.getElementById('bdAktiv').textContent = fmtKcal(adjustedAktivKcal);
-  document.getElementById('bdBasal').textContent = fmtKcal(d.basalKcal);
+  document.getElementById('bdBasal').textContent = fmtKcal(basalKcal);
   document.getElementById('bdEpoc').textContent = fmtKcal(epocKcal);
 }
 
@@ -1249,6 +1378,233 @@ function renderHomeKcal(){
     renderHomeKcal();
   });
 });
+
+/* ================= Zeiterfassung (Home): Start / Pause / Weiter / Ende ================= */
+let activityLog = { status: 'idle', startTs: null, endTs: null, pauses: [] };
+
+function loadActivity(dayIdx){
+  try{
+    const raw = localStorage.getItem('home-activity-day' + dayIdx);
+    activityLog = raw ? JSON.parse(raw) : { status: 'idle', startTs: null, endTs: null, pauses: [] };
+  } catch(e){
+    activityLog = { status: 'idle', startTs: null, endTs: null, pauses: [] };
+  }
+  renderActivity();
+}
+
+function saveActivity(dayIdx){
+  try{ localStorage.setItem('home-activity-day' + dayIdx, JSON.stringify(activityLog)); } catch(e){}
+}
+
+function readActivityLog(dayIdx){
+  try{
+    const raw = localStorage.getItem('home-activity-day' + dayIdx);
+    return raw ? JSON.parse(raw) : null;
+  } catch(e){
+    return null;
+  }
+}
+
+function fmtActiveDuration(hoursFloat){
+  if(hoursFloat === null || isNaN(hoursFloat)) return '';
+  const totalMin = Math.round(hoursFloat * 60);
+  const h = Math.floor(totalMin / 60);
+  const m = totalMin % 60;
+  return `${h}:${m.toString().padStart(2,'0')} h aktiv`;
+}
+
+function renderActivity(){
+  const statusLabels = { idle: 'Nicht gestartet', active: 'Aktiv', paused: 'Pausiert', ended: 'Beendet' };
+  const durationTxt = activityLog.status !== 'idle' ? ' · ' + fmtActiveDuration(getActiveHours()) : '';
+  document.getElementById('activityStatusText').textContent = statusLabels[activityLog.status] + durationTxt;
+  document.getElementById('btnStart').classList.toggle('disabled', activityLog.status !== 'idle');
+  document.getElementById('btnPause').classList.toggle('disabled', activityLog.status !== 'active');
+  document.getElementById('btnResume').classList.toggle('disabled', activityLog.status !== 'paused');
+  document.getElementById('btnEnd').classList.toggle('disabled', !(activityLog.status === 'active' || activityLog.status === 'paused'));
+}
+
+document.getElementById('btnStart').addEventListener('click', () => {
+  if(activityLog.status !== 'idle') return;
+  activityLog = { status: 'active', startTs: Date.now(), endTs: null, pauses: [] };
+  saveActivity(current);
+  renderActivity();
+  renderWaterStatus();
+});
+
+document.getElementById('btnPause').addEventListener('click', () => {
+  if(activityLog.status !== 'active') return;
+  activityLog.status = 'paused';
+  activityLog.pauses.push({ start: Date.now(), end: null });
+  saveActivity(current);
+  renderActivity();
+});
+
+document.getElementById('btnResume').addEventListener('click', () => {
+  if(activityLog.status !== 'paused') return;
+  const lastPause = activityLog.pauses[activityLog.pauses.length - 1];
+  if(lastPause && !lastPause.end) lastPause.end = Date.now();
+  activityLog.status = 'active';
+  saveActivity(current);
+  renderActivity();
+});
+
+document.getElementById('btnEnd').addEventListener('click', () => {
+  if(activityLog.status !== 'active' && activityLog.status !== 'paused') return;
+  if(activityLog.status === 'paused'){
+    const lastPause = activityLog.pauses[activityLog.pauses.length - 1];
+    if(lastPause && !lastPause.end) lastPause.end = Date.now();
+  }
+  activityLog.status = 'ended';
+  activityLog.endTs = Date.now();
+  saveActivity(current);
+  renderActivity();
+  renderWaterStatus();
+});
+
+// Lebendige Anzeige: Aktivzeit und Wasser-Soll jede Minute nachziehen
+setInterval(() => {
+  if(activityLog.status === 'active' || activityLog.status === 'paused'){
+    renderActivity();
+    renderWaterStatus();
+  }
+}, 60000);
+
+/* ================= Schnellerfassung (Home): Lebensmittel + Wasser ================= */
+let quickFoodCounts = { muesli:0, erdnuesse:0, clifbar:0, powergel:0 };
+let waterCount = 0; // Anzahl 100-ml-Einheiten
+
+function loadQuickFood(dayIdx){
+  try{
+    const raw = localStorage.getItem('home-quickfood-day' + dayIdx);
+    quickFoodCounts = raw ? JSON.parse(raw) : { muesli:0, erdnuesse:0, clifbar:0, powergel:0 };
+  } catch(e){
+    quickFoodCounts = { muesli:0, erdnuesse:0, clifbar:0, powergel:0 };
+  }
+  try{
+    const rawW = localStorage.getItem('home-water-day' + dayIdx);
+    waterCount = rawW ? (parseInt(rawW, 10) || 0) : 0;
+  } catch(e){
+    waterCount = 0;
+  }
+  renderQuickFood();
+  renderWaterStatus();
+}
+
+function saveQuickFood(dayIdx){
+  try{ localStorage.setItem('home-quickfood-day' + dayIdx, JSON.stringify(quickFoodCounts)); } catch(e){}
+  syncQuickFoodToLog(dayIdx);
+}
+
+function saveWaterCount(dayIdx){
+  try{ localStorage.setItem('home-water-day' + dayIdx, String(waterCount)); } catch(e){}
+}
+
+function renderQuickFood(){
+  document.getElementById('qtyMuesli').textContent = quickFoodCounts.muesli || 0;
+  document.getElementById('qtyErdnuesse').textContent = quickFoodCounts.erdnuesse || 0;
+  document.getElementById('qtyClifbar').textContent = quickFoodCounts.clifbar || 0;
+  document.getElementById('qtyPowergel').textContent = quickFoodCounts.powergel || 0;
+  document.getElementById('qtyWasser').textContent = waterCount;
+}
+
+function getActiveHours(){
+  if(!activityLog || activityLog.status === 'idle' || !activityLog.startTs) return null;
+  const now = Date.now();
+  let pausedMs = 0;
+  activityLog.pauses.forEach(p => { pausedMs += (p.end || now) - p.start; });
+  const endRef = activityLog.endTs || now;
+  const activeMs = Math.max(0, (endRef - activityLog.startTs) - pausedMs);
+  return activeMs / 3600000;
+}
+
+const WATER_BASE_ML_PER_KG = 35; // allgemeiner Richtwert für den normalen Tagesbedarf
+
+function getBaseWeightKg(){
+  const w = parseFloat(document.getElementById('inWeight').value);
+  return (w && w > 0) ? w : 80; // Fallback: Eckdaten-Gewicht
+}
+
+function computeWaterSollBaseMl(){
+  const now = new Date();
+  const hours = now.getHours() + now.getMinutes() / 60;
+  const dailyTotal = getBaseWeightKg() * WATER_BASE_ML_PER_KG;
+  return Math.round((dailyTotal * (hours / 24)) / 50) * 50;
+}
+
+function computeWaterSollTourMl(d){
+  const totalMl = parseFloat(String(d.waterTotal).replace(',', '.').replace(' L', '')) * 1000;
+  const activeH = getActiveHours();
+  if(activeH === null) return 0; // Zeiterfassung noch nicht gestartet -> noch kein Tour-Zusatzbedarf
+  const ratio = Math.min(activeH / d.zeitH, 1);
+  return Math.round((totalMl * ratio) / 50) * 50;
+}
+
+function renderWaterStatus(){
+  const d = days[current];
+  const base = computeWaterSollBaseMl();
+  const tour = computeWaterSollTourMl(d);
+  const total = base + tour;
+  document.getElementById('waterSollBase').textContent = base.toLocaleString('de-DE') + ' ml';
+  document.getElementById('waterSollTour').textContent = tour.toLocaleString('de-DE') + ' ml';
+  document.getElementById('waterSoll').textContent = total.toLocaleString('de-DE') + ' ml';
+  document.getElementById('waterIst').textContent = (waterCount * 100).toLocaleString('de-DE') + ' ml';
+}
+
+function adjustQuickFood(preset, delta){
+  if(preset === 'wasser'){
+    waterCount = Math.max(0, waterCount + delta);
+    document.getElementById('qtyWasser').textContent = waterCount;
+    saveWaterCount(current);
+    renderWaterStatus();
+    return;
+  }
+  quickFoodCounts[preset] = Math.max(0, (quickFoodCounts[preset] || 0) + delta);
+  renderQuickFood();
+  saveQuickFood(current);
+}
+
+document.querySelectorAll('.quick-food-row').forEach(row => {
+  const preset = row.dataset.preset;
+  row.querySelector('.qty-minus').addEventListener('click', () => adjustQuickFood(preset, -1));
+  row.querySelector('.qty-plus').addEventListener('click', () => adjustQuickFood(preset, 1));
+});
+
+// Schnellwahl-Einträge in den bestehenden Lebensmittel-Log (Modul "macros") einspielen,
+// damit sie im Food-Sheet und im Tagesbericht mit auftauchen.
+function syncQuickFoodToLog(dayIdx){
+  const moduleId = 'macros';
+  const key = foodKey(dayIdx, moduleId);
+  if(!foodEntries[key]){
+    try{
+      const raw = localStorage.getItem(storageKey(dayIdx, moduleId));
+      foodEntries[key] = raw ? JSON.parse(raw) : [];
+    } catch(e){
+      foodEntries[key] = [];
+    }
+  }
+  let entries = (foodEntries[key] || []).filter(e => !e.quickId);
+  Object.keys(quickFoodPresets).forEach(id => {
+    const count = quickFoodCounts[id] || 0;
+    if(count > 0){
+      const p = quickFoodPresets[id];
+      const label = `${p.label} × ${count}`;
+      entries.push({
+        id: 'quick_' + id,
+        quickId: id,
+        text: label,
+        computed: { kcal: Math.round(p.kcal * count), kh: Math.round(p.kh * count * 10) / 10, eiweiss: Math.round(p.ew * count * 10) / 10, fett: Math.round(p.ft * count * 10) / 10 },
+        status: 'done',
+        lastText: label
+      });
+    }
+  });
+  foodEntries[key] = entries;
+  try{ localStorage.setItem(storageKey(dayIdx, moduleId), JSON.stringify(entries)); } catch(e){}
+  if(activeModule && activeModule.dayIdx === dayIdx && activeModule.moduleId === moduleId){
+    renderFoodRows();
+    updateFoodSummary();
+  }
+}
 
 function renderModel(){
   const d = days[current];
@@ -1362,13 +1718,22 @@ function renderFoodRows(){
     input.type = 'text';
     input.placeholder = 'z. B. Tofu 150 Gramm';
     input.value = entry.text;
+    input.disabled = !!entry.quickId;
     input.addEventListener('keydown', e => { if(e.key === 'Enter'){ input.blur(); } });
-    input.addEventListener('blur', () => handleFoodChange(entry.id, input.value));
+    input.addEventListener('blur', () => { if(!entry.quickId) handleFoodChange(entry.id, input.value); });
 
     const removeBtn = document.createElement('div');
     removeBtn.className = 'food-remove';
     removeBtn.textContent = '×';
-    removeBtn.addEventListener('click', () => removeFoodEntry(entry.id));
+    removeBtn.addEventListener('click', () => {
+      if(entry.quickId){
+        quickFoodCounts[entry.quickId] = 0;
+        renderQuickFood();
+        saveQuickFood(dayIdx);
+      } else {
+        removeFoodEntry(entry.id);
+      }
+    });
 
     top.appendChild(input);
     top.appendChild(removeBtn);
@@ -1566,6 +1931,29 @@ function buildDayReport(){
   const round = n => Math.round(n * 10) / 10;
   const diffKcal = round(istKcal - parseFloat(target.kcal.replace('.','').replace(',','.')));
 
+  const actLog = readActivityLog(dayIdx);
+  let activityHtml = '';
+  if(actLog && actLog.startTs){
+    const fmtTime = ts => ts ? new Date(ts).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' }) : '–';
+    const pauseCount = actLog.pauses.length;
+    const pauseMs = actLog.pauses.reduce((sum, p) => sum + ((p.end || Date.now()) - p.start), 0);
+    const pauseMin = Math.round(pauseMs / 60000);
+    const endRef = actLog.endTs || Date.now();
+    const activeMs = Math.max(0, (endRef - actLog.startTs) - pauseMs);
+    const activeMin = Math.round(activeMs / 60000);
+    const activeH = Math.floor(activeMin / 60);
+    const activeM = activeMin % 60;
+    activityHtml = `
+  <h2>Zeiterfassung</h2>
+  <table class="compare">
+    <tr><td>Start</td><td>${fmtTime(actLog.startTs)}</td></tr>
+    <tr><td>Ende</td><td>${actLog.endTs ? fmtTime(actLog.endTs) : 'noch nicht beendet'}</td></tr>
+    <tr><td>Pausen</td><td>${pauseCount}</td></tr>
+    <tr><td>Pausendauer gesamt</td><td>${pauseMin} Min</td></tr>
+    <tr><td>Aktive Zeit</td><td>${activeH}:${activeM.toString().padStart(2,'0')} h</td></tr>
+  </table>`;
+  }
+
   let itemsHtml = '';
   Object.keys(itemsByModule).forEach(moduleId => {
     itemsHtml += `<h3>${moduleLabels[moduleId]}</h3><table class="items">`;
@@ -1611,7 +1999,7 @@ function buildDayReport(){
     <tr><td>Eiweiß Ziel / Ist</td><td>${target.ew} / ${round(istEw)} g</td></tr>
     <tr><td>Fett Ziel / Ist</td><td>${target.ft} / ${round(istFt)} g</td></tr>
   </table>
-
+  ${activityHtml}
   <h2>Erfasste Lebensmittel</h2>
   ${itemsHtml}
 </body></html>`;
@@ -2023,7 +2411,15 @@ function runCustomCalc(){
     activityKcal = flatKcal + climbMetabolicKcal;
   }
 
-  const restKcal = bmr * (24 - timeH) / 24;
+  // Uhrzeit-Modell: Aktivität startet fix um 8 Uhr. 0–8 Uhr und 22–24 Uhr = Schlaf (10 % Absenkung),
+  // dazwischen bis 22 Uhr normale Basis. Sehr lange Aktivitäten reichen in den späten Schlafblock hinein.
+  const sleepDiscount = 0.90;
+  const activityEndClock = 8 + timeH;
+  const sleepBlock1 = 8;
+  const normalBasisH = Math.max(0, 22 - activityEndClock);
+  const sleepBlock2 = Math.max(0, 24 - Math.max(activityEndClock, 22));
+  const totalSleepH = sleepBlock1 + sleepBlock2;
+  const restKcal = (bmr / 24) * (totalSleepH * sleepDiscount + normalBasisH * 1.0);
 
   const fallbackMaxHR = 208 - 0.7 * age;
   const epocPct = computeEpocPct(hrRest, hrMax, hrAvg, fallbackMaxHR);
